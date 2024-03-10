@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suppressions PUBLIC
+        "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+        "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+<suppressions>
+    <!-- Suppress Javadoc requirements for tests -->
+    <suppress checks="JavadocType" files="src/(test|integTest)/.+"/>
+    <suppress checks="JavadocMethod" files="src/(test|integTest)/.+"/>
+    <suppress checks="JavadocPackage" files="src/(test|integTest)/.+"/>
+
+    <!-- Suppress method length check in tests -->
+    <suppress checks="MethodLength" files="src/(test|integTest)/.+"/>
+
+    <!-- Suppress checking resources -->
+    <suppress checks="." files="src/main/resources/.+"/>
+</suppressions>

@@ -1,0 +1,23 @@
+[versions]
+java = "17"
+# Do not upgrade Checkstyle until https://github.com/checkstyle/checkstyle/issues/14123 is properly fixed
+checkstyle = "10.12.5"
+jacoco = "0.8.11"
+junit = "5.10.2"
+spotbugs = "4.8.3"
+
+[plugins]
+dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.30.0" }
+spotbugs = { id = "com.github.spotbugs", version = "6.0.7" }
+versions = { id = "com.github.ben-manes.versions", version = "0.51.0" }
+
+[libraries]
+assertJ = "org.assertj:assertj-core:3.25.3"
+commonsIO = "commons-io:commons-io:2.15.1"
+cthingAnnots = "org.cthing:cthing-annotations:1.0.0"
+locc4j = "org.cthing:locc4j:1.0.0-+"
+jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
+junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+junitLauncher = "org.junit.platform:junit-platform-launcher:1.10.2"
+spotbugsContrib = "com.mebigfatguy.sb-contrib:sb-contrib:7.6.4"

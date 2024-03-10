@@ -1,0 +1,119 @@
+/*
+ * Copyright 2024 C Thing Software
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.cthing.gradle.plugins.locc;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+
+import org.cthing.gradle.plugins.locc.reports.LoccReport;
+import org.cthing.locc4j.FileCounter;
+import org.cthing.locc4j.Language;
+import org.cthing.locc4j.Stats;
+import org.gradle.api.Action;
+import org.gradle.api.Project;
+import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.provider.Property;
+import org.gradle.api.reporting.Reporting;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Nested;
+import org.gradle.api.tasks.Optional;
+import org.gradle.api.tasks.SourceTask;
+import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.TaskExecutionException;
+
+import groovy.lang.Closure;
+
+
+/**
+ * Performs the work of counting the project's code file.
+ */
+public class LoccTask extends SourceTask implements Reporting<LoccReports> {
+
+    private final Property<Boolean> countDocStrings;
+    private final LoccReports reports;
+
+    public LoccTask() {
+        final Project project = getProject();
+        final LoccExtension extension = project.getExtensions().getByType(LoccExtension.class);
+
+        this.countDocStrings = project.getObjects().property(Boolean.class).convention(extension.getCountDocStrings());
+
+        final DirectoryProperty reportsDir = project.getObjects().directoryProperty().convention(extension.getReportsDir());
+        this.reports = new LoccReports(project, reportsDir);
+    }
+
+    @Input
+    @Optional
+    public Property<Boolean> getCountDocStrings() {
+        return this.countDocStrings;
+    }
+
+    @Nested
+    @Override
+    public LoccReports getReports() {
+        return this.reports;
+    }
+
+    @Override
+    public LoccReports reports(final Action<? super LoccReports> configureAction) {
+        configureAction.execute(this.reports);
+        return this.reports;
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    public LoccReports reports(final Closure configureClosure) {
+        getProject().configure(this.reports, configureClosure);
+        return this.reports;
+    }
+
+    /**
+     * Performs the work of counting lines.
+     */
+    @TaskAction
+    public void count() {
+        final List<Path> files = getSource().getFiles().stream().map(File::toPath).toList();
+
+        final FileCounter counter = new FileCounter();
+        counter.countDocStrings(this.countDocStrings.get());
+        try {
+            final Map<Path, Map<Language, Stats>> counts = counter.count(files);
+            generateReports(counts);
+        } catch (final IOException ex) {
+            throw new TaskExecutionException(this, ex);
+        }
+    }
+
+    private void generateReports(final Map<Path, Map<Language, Stats>> counts) {
+        generateReport(this.reports.getXml(), counts);
+        generateReport(this.reports.getHtml(), counts);
+        generateReport(this.reports.getYaml(), counts);
+        generateReport(this.reports.getJson(), counts);
+        generateReport(this.reports.getCsv(), counts);
+        generateReport(this.reports.getText(), counts);
+        generateReport(this.reports.getDot(), counts);
+    }
+
+    private void generateReport(final LoccReport report, final Map<Path, Map<Language, Stats>> counts) {
+        if (report.getRequired().get()) {
+            report.generateReport(counts);
+        }
+    }
+}
