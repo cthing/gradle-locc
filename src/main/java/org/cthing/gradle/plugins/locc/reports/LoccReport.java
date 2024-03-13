@@ -19,8 +19,8 @@ package org.cthing.gradle.plugins.locc.reports;
 import java.nio.file.Path;
 import java.util.Map;
 
+import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.Language;
-import org.cthing.locc4j.Stats;
 import org.gradle.api.reporting.SingleFileReport;
 
 
@@ -32,7 +32,7 @@ public interface LoccReport extends SingleFileReport {
     /**
      * Writes the line count report in a specific file format.
      *
-     * @param counts Line count data to report
+     * @param pathCounts Line count data to report
      */
-    void generateReport(Map<Path, Map<Language, Stats>> counts);
+    void generateReport(Map<Path, Map<Language, Counts>> pathCounts);
 }

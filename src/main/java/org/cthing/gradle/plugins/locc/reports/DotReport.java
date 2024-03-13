@@ -21,9 +21,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.Language;
-import org.cthing.locc4j.Stats;
-import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.file.DirectoryProperty;
 
 
@@ -33,13 +33,13 @@ import org.gradle.api.file.DirectoryProperty;
 public final class DotReport extends AbstractLoccReport {
 
     @Inject
-    public DotReport(final Project project, final DirectoryProperty reportsDir) {
-        super(project, "dot", "Graph in DOT format", false);
+    public DotReport(final Task task, final DirectoryProperty reportsDir) {
+        super(task, "dot", "Graph in DOT format", false);
         getOutputLocation().value(reportsDir.file(REPORT_BASE_NAME + ".dot"));
     }
 
     @Override
-    public void generateReport(final Map<Path, Map<Language, Stats>> counts) {
+    public void generateReport(final Map<Path, Map<Language, Counts>> counts) {
 
     }
 }

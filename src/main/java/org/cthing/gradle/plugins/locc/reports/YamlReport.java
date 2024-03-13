@@ -21,9 +21,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.Language;
-import org.cthing.locc4j.Stats;
-import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.file.DirectoryProperty;
 
 
@@ -33,13 +33,13 @@ import org.gradle.api.file.DirectoryProperty;
 public final class YamlReport extends AbstractLoccReport {
 
     @Inject
-    public YamlReport(final Project project, final DirectoryProperty reportsDir) {
-        super(project, "yaml", "Report in YAML format", false);
+    public YamlReport(final Task task, final DirectoryProperty reportsDir) {
+        super(task, "yaml", "Report in YAML format", false);
         getOutputLocation().value(reportsDir.file(REPORT_BASE_NAME + ".yaml"));
     }
 
     @Override
-    public void generateReport(final Map<Path, Map<Language, Stats>> counts) {
+    public void generateReport(final Map<Path, Map<Language, Counts>> counts) {
 
     }
 }

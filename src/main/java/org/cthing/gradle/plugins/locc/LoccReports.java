@@ -40,8 +40,8 @@ import org.gradle.api.NamedDomainObjectCollectionSchema;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.NamedDomainObjectSet;
 import org.gradle.api.Namer;
-import org.gradle.api.Project;
 import org.gradle.api.Rule;
+import org.gradle.api.Task;
 import org.gradle.api.UnknownDomainObjectException;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Provider;
@@ -58,22 +58,22 @@ import groovy.lang.Closure;
  */
 public class LoccReports implements ReportContainer<LoccReport> {
 
-    private final Project project;
+    private final Task task;
     private final NamedDomainObjectSet<LoccReport> reports;
     private final NamedDomainObjectSet<LoccReport> enabled;
 
-    public LoccReports(final Project project, final DirectoryProperty reportsDir) {
-        this.project = project;
-        this.reports = project.getObjects().namedDomainObjectSet(LoccReport.class);
+    public LoccReports(final Task task, final DirectoryProperty reportsDir) {
+        this.task = task;
+        this.reports = task.getProject().getObjects().namedDomainObjectSet(LoccReport.class);
         this.enabled = this.reports.matching(report -> report.getRequired().get());
 
-        this.reports.add(new XmlReport(project, reportsDir));
-        this.reports.add(new HtmlReport(project, reportsDir));
-        this.reports.add(new YamlReport(project, reportsDir));
-        this.reports.add(new JsonReport(project, reportsDir));
-        this.reports.add(new CsvReport(project, reportsDir));
-        this.reports.add(new TextReport(project, reportsDir));
-        this.reports.add(new DotReport(project, reportsDir));
+        this.reports.add(new XmlReport(task, reportsDir));
+        this.reports.add(new HtmlReport(task, reportsDir));
+        this.reports.add(new YamlReport(task, reportsDir));
+        this.reports.add(new JsonReport(task, reportsDir));
+        this.reports.add(new CsvReport(task, reportsDir));
+        this.reports.add(new TextReport(task, reportsDir));
+        this.reports.add(new DotReport(task, reportsDir));
     }
 
     @Internal
@@ -373,7 +373,7 @@ public class LoccReports implements ReportContainer<LoccReport> {
     @Override
     @SuppressWarnings("rawtypes")
     public ReportContainer<LoccReport> configure(final Closure cl) {
-        this.project.configure(this, cl);
+        this.task.getProject().configure(this, cl);
         return this;
     }
 }

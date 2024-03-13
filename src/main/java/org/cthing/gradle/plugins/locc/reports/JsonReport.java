@@ -21,9 +21,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.Language;
-import org.cthing.locc4j.Stats;
-import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.file.DirectoryProperty;
 
 
@@ -33,13 +33,13 @@ import org.gradle.api.file.DirectoryProperty;
 public final class JsonReport extends AbstractLoccReport {
 
     @Inject
-    public JsonReport(final Project project, final DirectoryProperty reportsDir) {
-        super(project, "json", "Report in JSON format", false);
+    public JsonReport(final Task task, final DirectoryProperty reportsDir) {
+        super(task, "json", "Report in JSON format", false);
         getOutputLocation().value(reportsDir.file(REPORT_BASE_NAME + ".json"));
     }
 
     @Override
-    public void generateReport(final Map<Path, Map<Language, Stats>> counts) {
+    public void generateReport(final Map<Path, Map<Language, Counts>> counts) {
 
     }
 }

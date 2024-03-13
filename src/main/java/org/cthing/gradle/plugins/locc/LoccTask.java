@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.cthing.gradle.plugins.locc.reports.LoccReport;
+import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.FileCounter;
 import org.cthing.locc4j.Language;
-import org.cthing.locc4j.Stats;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
@@ -56,7 +56,7 @@ public class LoccTask extends SourceTask implements Reporting<LoccReports> {
         this.countDocStrings = project.getObjects().property(Boolean.class).convention(extension.getCountDocStrings());
 
         final DirectoryProperty reportsDir = project.getObjects().directoryProperty().convention(extension.getReportsDir());
-        this.reports = new LoccReports(project, reportsDir);
+        this.reports = new LoccReports(this, reportsDir);
     }
 
     @Input
@@ -94,14 +94,14 @@ public class LoccTask extends SourceTask implements Reporting<LoccReports> {
         final FileCounter counter = new FileCounter();
         counter.countDocStrings(this.countDocStrings.get());
         try {
-            final Map<Path, Map<Language, Stats>> counts = counter.count(files);
+            final Map<Path, Map<Language, Counts>> counts = counter.count(files);
             generateReports(counts);
         } catch (final IOException ex) {
             throw new TaskExecutionException(this, ex);
         }
     }
 
-    private void generateReports(final Map<Path, Map<Language, Stats>> counts) {
+    private void generateReports(final Map<Path, Map<Language, Counts>> counts) {
         generateReport(this.reports.getXml(), counts);
         generateReport(this.reports.getHtml(), counts);
         generateReport(this.reports.getYaml(), counts);
@@ -111,7 +111,7 @@ public class LoccTask extends SourceTask implements Reporting<LoccReports> {
         generateReport(this.reports.getDot(), counts);
     }
 
-    private void generateReport(final LoccReport report, final Map<Path, Map<Language, Stats>> counts) {
+    private void generateReport(final LoccReport report, final Map<Path, Map<Language, Counts>> counts) {
         if (report.getRequired().get()) {
             report.generateReport(counts);
         }

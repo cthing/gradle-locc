@@ -16,15 +16,34 @@
 
 package org.cthing.gradle.plugins.locc.reports;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.xml.XMLConstants;
 
+import org.cthing.locc4j.CountUtils;
+import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.Language;
-import org.cthing.locc4j.Stats;
-import org.gradle.api.Project;
+import org.cthing.xmlwriter.XmlWriter;
+import org.gradle.api.Task;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.tasks.TaskExecutionException;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 
 /**
@@ -32,14 +51,127 @@ import org.gradle.api.file.DirectoryProperty;
  */
 public final class XmlReport extends AbstractLoccReport {
 
+    private static final int FORMAT_VERSION = 1;
+    private static final String NAMESPACE = "https://www.cthing.com/locc";
+    private static final String SCHEMA_FILENAME = "locc-1.xsd";
+    private static final String SCHEMA_URL = "https://www.cthing.com/schemas/" + SCHEMA_FILENAME;
+
+    @Nullable
+    private Counts totalCounts;
+
     @Inject
-    public XmlReport(final Project project, final DirectoryProperty reportsDir) {
-        super(project, "xml", "Report in XML format", true);
+    public XmlReport(final Task task, final DirectoryProperty reportsDir) {
+        super(task, "xml", "Report in XML format", true);
         getOutputLocation().value(reportsDir.file(REPORT_BASE_NAME + ".xml"));
     }
 
     @Override
-    public void generateReport(final Map<Path, Map<Language, Stats>> counts) {
+    public void generateReport(final Map<Path, Map<Language, Counts>> pathCounts) {
+        this.totalCounts = CountUtils.total(pathCounts);
 
+        final File destination = getOutputLocation().getAsFile().get();
+        try (Writer writer = new OutputStreamWriter(Files.newOutputStream(destination.toPath()),
+                                                    StandardCharsets.UTF_8)) {
+            final XmlWriter xmlWriter = new XmlWriter(writer);
+            xmlWriter.setPrettyPrint(true);
+
+            xmlWriter.startDocument();
+            xmlWriter.addNSPrefix("", NAMESPACE);
+
+            final AttributesImpl attrs = new AttributesImpl();
+            addAttribute(attrs, "xmlns:xsi", XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
+            addAttribute(attrs, "xsi:schemaLocation", SCHEMA_URL + " " + SCHEMA_FILENAME);
+            addAttribute(attrs, "formatVersion", FORMAT_VERSION);
+            addAttribute(attrs, "date", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US).format(new Date()));
+            addAttribute(attrs, "projectName", this.task.getProject().getName());
+            addAttribute(attrs, "projectVersion", this.task.getProject().getVersion().toString());
+            xmlWriter.startElement(NAMESPACE, "locc", attrs);
+
+            writeLanguages(xmlWriter, pathCounts);
+            writeFiles(xmlWriter, pathCounts);
+
+            xmlWriter.endElement();
+            xmlWriter.endDocument();
+        } catch (final IOException | SAXException ex) {
+            throw new TaskExecutionException(this.task, ex);
+        }
+    }
+
+    private void writeLanguages(final XmlWriter xmlWriter, final Map<Path, Map<Language, Counts>> pathCounts)
+            throws SAXException {
+        assert this.totalCounts != null;
+        final Map<Language, Counts> langCounts = CountUtils.byLanguage(pathCounts);
+
+        final AttributesImpl langsAttrs = new AttributesImpl();
+        addAttribute(langsAttrs, "numLanguages", langCounts.size());
+        addCountAttributes(langsAttrs, this.totalCounts);
+        xmlWriter.startElement(NAMESPACE, "languages", langsAttrs);
+
+        final List<Language> languages = new ArrayList<>(langCounts.keySet());
+        languages.sort(Comparator.comparing(Language::getDisplayName));
+        for (final Language language : languages) {
+            writeLanguage(xmlWriter, language, langCounts.get(language));
+        }
+
+        xmlWriter.endElement();
+    }
+
+    private void writeFiles(final XmlWriter xmlWriter, final Map<Path, Map<Language, Counts>> pathCounts)
+            throws SAXException {
+        assert this.totalCounts != null;
+        final int numFiles = pathCounts.size();
+        final int numUnrecognized = CountUtils.unrecognized(pathCounts).size();
+
+        final AttributesImpl filesAttrs = new AttributesImpl();
+        addAttribute(filesAttrs, "numFiles", numFiles);
+        addAttribute(filesAttrs, "numUnrecognized", numUnrecognized);
+        addCountAttributes(filesAttrs, this.totalCounts);
+        xmlWriter.startElement(NAMESPACE, "files", filesAttrs);
+
+        final Path rootProjectPath = this.task.getProject().getRootProject().getProjectDir().toPath();
+        final List<Path> paths = new ArrayList<>(pathCounts.keySet());
+        paths.sort(Path::compareTo);
+        for (final Path path : paths) {
+            final Path relativePath = rootProjectPath.relativize(path);
+            final AttributesImpl fileAttrs = new AttributesImpl();
+            addAttribute(fileAttrs, "pathname", relativePath.toString());
+            xmlWriter.startElement(NAMESPACE, "file", fileAttrs);
+
+            final Map<Language, Counts> langCounts = pathCounts.get(path);
+            final List<Language> languages = new ArrayList<>(langCounts.keySet());
+            languages.sort(Comparator.comparing(Language::getDisplayName));
+            for (final Language language : languages) {
+                writeLanguage(xmlWriter, language, langCounts.get(language));
+            }
+
+            xmlWriter.endElement();
+        }
+
+        xmlWriter.endElement();
+    }
+
+    private void writeLanguage(final XmlWriter xmlWriter, final Language language, final Counts counts)
+            throws SAXException {
+        final AttributesImpl langAttrs = new AttributesImpl();
+        addAttribute(langAttrs, "name", language.name());
+        addAttribute(langAttrs, "displayName", language.getDisplayName());
+        addCountAttributes(langAttrs, counts);
+        xmlWriter.startElement(NAMESPACE, "language", langAttrs);
+        xmlWriter.endElement();
+    }
+
+    private void addCountAttributes(final AttributesImpl attrs, final Counts counts) {
+        addAttribute(attrs, "totalLines", counts.getTotalLines());
+        addAttribute(attrs, "codeLines", counts.getCodeLines());
+        addAttribute(attrs, "commentLines", counts.getCommentLines());
+        addAttribute(attrs, "blankLines", counts.getBlankLines());
+    }
+
+    private void addAttribute(final AttributesImpl attrs, final String name, final String value) {
+        attrs.addAttribute("", "", name, "CDATA", value);
+    }
+
+    private void addAttribute(final AttributesImpl attrs, final String name, final int value) {
+        addAttribute(attrs, name, Integer.toString(value, 10));
     }
 }

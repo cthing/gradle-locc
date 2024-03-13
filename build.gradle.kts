@@ -56,6 +56,7 @@ dependencies {
     api(libs.locc4j)
 
     implementation(libs.cthingAnnots)
+    implementation(libs.xmlWriter)
 
     testImplementation(libs.assertJ)
     testImplementation(libs.commonsIO)

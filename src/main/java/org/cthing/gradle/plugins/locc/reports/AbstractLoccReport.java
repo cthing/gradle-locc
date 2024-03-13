@@ -18,7 +18,7 @@ package org.cthing.gradle.plugins.locc.reports;
 
 import java.io.File;
 
-import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
@@ -34,19 +34,20 @@ public abstract class AbstractLoccReport implements LoccReport {
 
     protected static final String REPORT_BASE_NAME = "locc";
 
-    private final Project project;
+    protected final Task task;
+
     private final String name;
     private final String displayName;
     private final RegularFileProperty destination;
     private final Property<Boolean> required;
 
-    protected AbstractLoccReport(final Project project, final String name, final String displayName,
+    protected AbstractLoccReport(final Task task, final String name, final String displayName,
                                  final boolean required) {
-        this.project = project;
+        this.task = task;
         this.name = name;
         this.displayName = displayName;
 
-        final ObjectFactory objects = project.getObjects();
+        final ObjectFactory objects = task.getProject().getObjects();
         this.destination = objects.fileProperty();
         this.required = objects.property(Boolean.class).convention(required);
     }
@@ -86,7 +87,7 @@ public abstract class AbstractLoccReport implements LoccReport {
     @Override
     @SuppressWarnings("rawtypes")
     public Report configure(final Closure closure) {
-        this.project.configure(this, closure);
+        this.task.getProject().configure(this, closure);
         return this;
     }
 }

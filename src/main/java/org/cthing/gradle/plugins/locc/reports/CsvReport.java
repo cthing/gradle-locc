@@ -21,9 +21,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.Language;
-import org.cthing.locc4j.Stats;
-import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.file.DirectoryProperty;
 
 
@@ -34,13 +34,13 @@ import org.gradle.api.file.DirectoryProperty;
 public final class CsvReport extends AbstractLoccReport {
 
     @Inject
-    public CsvReport(final Project project, final DirectoryProperty reportsDir) {
-        super(project, "csv", "Report in CSV format", false);
+    public CsvReport(final Task task, final DirectoryProperty reportsDir) {
+        super(task, "csv", "Report in CSV format", false);
         getOutputLocation().value(reportsDir.file(REPORT_BASE_NAME + ".csv"));
     }
 
     @Override
-    public void generateReport(final Map<Path, Map<Language, Stats>> counts) {
+    public void generateReport(final Map<Path, Map<Language, Counts>> counts) {
 
     }
 }
