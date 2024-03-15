@@ -129,20 +129,25 @@ public final class XmlReport extends AbstractLoccReport {
         addCountAttributes(filesAttrs, this.totalCounts);
         xmlWriter.startElement(NAMESPACE, "files", filesAttrs);
 
+        final Map<Path, Counts> pathTotals = CountUtils.byFile(pathCounts);
+
         final Path rootProjectPath = this.task.getProject().getRootProject().getProjectDir().toPath();
         final List<Path> paths = new ArrayList<>(pathCounts.keySet());
         paths.sort(Path::compareTo);
         for (final Path path : paths) {
+            final Map<Language, Counts> langCounts = pathCounts.get(path);
+
             final Path relativePath = rootProjectPath.relativize(path);
             final AttributesImpl fileAttrs = new AttributesImpl();
             addAttribute(fileAttrs, "pathname", relativePath.toString());
+            addAttribute(fileAttrs, "numLanguages", langCounts.size());
+            addCountAttributes(fileAttrs, pathTotals.get(path));
             xmlWriter.startElement(NAMESPACE, "file", fileAttrs);
 
-            final Map<Language, Counts> langCounts = pathCounts.get(path);
             final List<Language> languages = new ArrayList<>(langCounts.keySet());
             languages.sort(Comparator.comparing(Language::getDisplayName));
             for (final Language language : languages) {
-                writeLanguage(xmlWriter, language, langCounts.get(language));
+                writeLanguageRef(xmlWriter, language, langCounts.get(language));
             }
 
             xmlWriter.endElement();
@@ -156,6 +161,17 @@ public final class XmlReport extends AbstractLoccReport {
         final AttributesImpl langAttrs = new AttributesImpl();
         addAttribute(langAttrs, "name", language.name());
         addAttribute(langAttrs, "displayName", language.getDisplayName());
+        addAttribute(langAttrs, "description", language.getDescription());
+        addAttribute(langAttrs, "website", language.getWebsite());
+        addCountAttributes(langAttrs, counts);
+        xmlWriter.startElement(NAMESPACE, "language", langAttrs);
+        xmlWriter.endElement();
+    }
+
+    private void writeLanguageRef(final XmlWriter xmlWriter, final Language language, final Counts counts)
+            throws SAXException {
+        final AttributesImpl langAttrs = new AttributesImpl();
+        addAttribute(langAttrs, "name", language.name());
         addCountAttributes(langAttrs, counts);
         xmlWriter.startElement(NAMESPACE, "language", langAttrs);
         xmlWriter.endElement();
@@ -168,8 +184,10 @@ public final class XmlReport extends AbstractLoccReport {
         addAttribute(attrs, "blankLines", counts.getBlankLines());
     }
 
-    private void addAttribute(final AttributesImpl attrs, final String name, final String value) {
-        attrs.addAttribute("", "", name, "CDATA", value);
+    private void addAttribute(final AttributesImpl attrs, final String name, @Nullable final String value) {
+        if (value != null) {
+            attrs.addAttribute("", "", name, "CDATA", value);
+        }
     }
 
     private void addAttribute(final AttributesImpl attrs, final String name, final int value) {

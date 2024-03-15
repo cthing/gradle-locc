@@ -29,7 +29,7 @@
         <annotation>
             <documentation>
                 Information about a language found in the counted files. Attributes of this element provide
-                the language and the lines counted for that language.
+                the language details and the lines counted for the language.
             </documentation>
         </annotation>
     </element>
@@ -84,6 +84,54 @@
         </attribute>
     </complexType>
 
+    <complexType name="languagesSchema">
+        <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="lc:language"/>
+        </sequence>
+        <attribute name="numLanguages" type="nonNegativeInteger" use="required">
+            <annotation>
+                <documentation>
+                    Total number of languages detected in the counted files.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attributeGroup ref="lc:countAttrs"/>
+    </complexType>
+
+    <complexType name="languageSchema">
+        <attribute name="name" type="token" use="required">
+            <annotation>
+                <documentation>
+                    Identifier for the language.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="displayName" type="string">
+            <annotation>
+                <documentation>
+                    Name of the language for display in a user interface.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="description" type="string">
+            <annotation>
+                <documentation>
+                    Description of the language.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="website" type="string">
+            <annotation>
+                <documentation>
+                    URL of a website that provides detailed information about the language. Typically, this is the
+                    official site for the language. If there is no official site, an alternate source of information
+                    may be provided (e.g. Wikipedia).
+                </documentation>
+            </annotation>
+        </attribute>
+        <attributeGroup ref="lc:countAttrs"/>
+    </complexType>
+
     <complexType name="filesSchema">
         <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="lc:file"/>
@@ -116,34 +164,10 @@
                 </documentation>
             </annotation>
         </attribute>
-    </complexType>
-
-    <complexType name="languagesSchema">
-        <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="lc:language"/>
-        </sequence>
         <attribute name="numLanguages" type="nonNegativeInteger" use="required">
             <annotation>
                 <documentation>
-                    Total number of languages detected in the counted files.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attributeGroup ref="lc:countAttrs"/>
-    </complexType>
-
-    <complexType name="languageSchema">
-        <attribute name="name" type="token" use="required">
-            <annotation>
-                <documentation>
-                    Identifier for the language.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="displayName" type="string" use="required">
-            <annotation>
-                <documentation>
-                    Name of the language for display in a user interface.
+                    Number of languages detected in the file.
                 </documentation>
             </annotation>
         </attribute>
