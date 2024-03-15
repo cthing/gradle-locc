@@ -49,10 +49,11 @@ import org.xml.sax.helpers.AttributesImpl;
 /**
  * Generates a line count report in the <a href="https://www.w3.org/XML/">Extensible Markup Language</a>.
  */
+@SuppressWarnings("HttpUrlsUsage")
 public final class XmlReport extends AbstractLoccReport {
 
     private static final int FORMAT_VERSION = 1;
-    private static final String NAMESPACE = "https://www.cthing.com/locc";
+    private static final String NAMESPACE = "http://www.cthing.com/locc";
     private static final String SCHEMA_FILENAME = "locc-1.xsd";
     private static final String SCHEMA_URL = "https://www.cthing.com/schemas/" + SCHEMA_FILENAME;
 
@@ -82,7 +83,7 @@ public final class XmlReport extends AbstractLoccReport {
             addAttribute(attrs, "xmlns:xsi", XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
             addAttribute(attrs, "xsi:schemaLocation", SCHEMA_URL + " " + SCHEMA_FILENAME);
             addAttribute(attrs, "formatVersion", FORMAT_VERSION);
-            addAttribute(attrs, "date", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US).format(new Date()));
+            addAttribute(attrs, "date", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.US).format(new Date()));
             addAttribute(attrs, "projectName", this.task.getProject().getName());
             addAttribute(attrs, "projectVersion", this.task.getProject().getVersion().toString());
             xmlWriter.startElement(NAMESPACE, "locc", attrs);

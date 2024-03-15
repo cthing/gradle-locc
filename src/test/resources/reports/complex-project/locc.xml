@@ -1,0 +1,48 @@
+<?xml version="1.0" standalone="yes"?>
+<locc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://www.cthing.com/schemas/locc-1.xsd locc-1.xsd" formatVersion="1" date="${xmlunit.ignore}" projectName="complex-project" projectVersion="unspecified" xmlns="http://www.cthing.com/locc">
+    <languages numLanguages="5" totalLines="148" codeLines="82" commentLines="44" blankLines="22">
+        <language name="CHeader" displayName="C Header" totalLines="13" codeLines="10" commentLines="0" blankLines="3"/>
+        <language name="Cpp" displayName="C++" totalLines="21" codeLines="18" commentLines="0" blankLines="3"/>
+        <language name="Java" displayName="Java" totalLines="76" codeLines="22" commentLines="44" blankLines="10"/>
+        <language name="Kotlin" displayName="Kotlin" totalLines="18" codeLines="15" commentLines="0" blankLines="3"/>
+        <language name="Swift" displayName="Swift" totalLines="20" codeLines="17" commentLines="0" blankLines="3"/>
+    </languages>
+    <files numFiles="12" numUnrecognized="0" totalLines="148" codeLines="82" commentLines="44" blankLines="22">
+        <file pathname="project1/src/main/java/com/cthing/project1/HelloWorld.java">
+            <language name="Java" displayName="Java" totalLines="29" codeLines="10" commentLines="15" blankLines="4"/>
+        </file>
+        <file pathname="project1/src/main/java/com/cthing/project1/package-info.java">
+            <language name="Java" displayName="Java" totalLines="9" codeLines="1" commentLines="7" blankLines="1"/>
+        </file>
+        <file pathname="project2/src/main/java/com/cthing/project2/GoodbyeWorld.java">
+            <language name="Java" displayName="Java" totalLines="29" codeLines="10" commentLines="15" blankLines="4"/>
+        </file>
+        <file pathname="project2/src/main/java/com/cthing/project2/package-info.java">
+            <language name="Java" displayName="Java" totalLines="9" codeLines="1" commentLines="7" blankLines="1"/>
+        </file>
+        <file pathname="project3/src/main/cpp/app.cpp">
+            <language name="Cpp" displayName="C++" totalLines="13" codeLines="11" commentLines="0" blankLines="2"/>
+        </file>
+        <file pathname="project3/src/main/headers/app.h">
+            <language name="CHeader" displayName="C Header" totalLines="13" codeLines="10" commentLines="0" blankLines="3"/>
+        </file>
+        <file pathname="project3/src/test/cpp/app_test.cpp">
+            <language name="Cpp" displayName="C++" totalLines="8" codeLines="7" commentLines="0" blankLines="1"/>
+        </file>
+        <file pathname="project4/src/main/swift/Hello.swift">
+            <language name="Swift" displayName="Swift" totalLines="5" codeLines="5" commentLines="0" blankLines="0"/>
+        </file>
+        <file pathname="project4/src/test/swift/HelloTests.swift">
+            <language name="Swift" displayName="Swift" totalLines="12" codeLines="10" commentLines="0" blankLines="2"/>
+        </file>
+        <file pathname="project4/src/test/swift/LinuxMain.swift">
+            <language name="Swift" displayName="Swift" totalLines="3" codeLines="2" commentLines="0" blankLines="1"/>
+        </file>
+        <file pathname="project5/src/main/kotlin/org/example/Library.kt">
+            <language name="Kotlin" displayName="Kotlin" totalLines="7" codeLines="6" commentLines="0" blankLines="1"/>
+        </file>
+        <file pathname="project5/src/test/kotlin/org/example/LibraryTest.kt">
+            <language name="Kotlin" displayName="Kotlin" totalLines="11" codeLines="9" commentLines="0" blankLines="2"/>
+        </file>
+    </files>
+</locc>

@@ -21,4 +21,7 @@ junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "juni
 junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 junitLauncher = "org.junit.platform:junit-platform-launcher:1.10.2"
 spotbugsContrib = "com.mebigfatguy.sb-contrib:sb-contrib:7.6.4"
+xmlAssertJ = "org.xmlunit:xmlunit-assertj3:2.9.1"
+xmlPlaceholders = "org.xmlunit:xmlunit-placeholders:2.9.1"
+xmlUnit = "org.xmlunit:xmlunit-core:2.9.1"
 xmlWriter = "org.cthing:xmlwriter:2.0.1"

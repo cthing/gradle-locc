@@ -18,6 +18,7 @@ package org.cthing.gradle.plugins.locc;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +29,8 @@ import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.xmlunit.assertj3.XmlAssert;
+import org.xmlunit.placeholder.PlaceholderDifferenceEvaluator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gradle.testkit.runner.TaskOutcome.NO_SOURCE;
@@ -88,6 +91,8 @@ public class PluginIntegTest {
         final BuildTask task = result.task(":countLines");
         assertThat(task).isNotNull();
         assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(SUCCESS);
+
+        verifyXmlReport(projectDir, "/reports/simple-project");
     }
 
     @Test
@@ -105,5 +110,19 @@ public class PluginIntegTest {
         final BuildTask task = result.task(":countLines");
         assertThat(task).isNotNull();
         assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(SUCCESS);
+
+        verifyXmlReport(projectDir, "/reports/complex-project");
+    }
+
+    private void verifyXmlReport(final File projectDir, final String reportsDir) throws IOException {
+        try (InputStream expectedReport = getClass().getResourceAsStream(reportsDir + "/locc.xml");
+             InputStream schema = getClass().getResourceAsStream("/org/cthing/gradle/plugins/locc/locc-1.xsd")) {
+            final File actualReport = new File(projectDir, "build/reports/locc/locc.xml");
+            XmlAssert.assertThat(actualReport).isValidAgainst(schema);
+            XmlAssert.assertThat(actualReport)
+                     .and(expectedReport)
+                     .withDifferenceEvaluator(new PlaceholderDifferenceEvaluator())
+                     .areIdentical();
+        }
     }
 }

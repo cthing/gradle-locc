@@ -61,6 +61,9 @@ dependencies {
     testImplementation(libs.assertJ)
     testImplementation(libs.commonsIO)
     testImplementation(libs.junitApi)
+    testImplementation(libs.xmlAssertJ)
+    testImplementation(libs.xmlPlaceholders)
+    testImplementation(libs.xmlUnit)
 
     testRuntimeOnly(libs.junitEngine)
     testRuntimeOnly(libs.junitLauncher)

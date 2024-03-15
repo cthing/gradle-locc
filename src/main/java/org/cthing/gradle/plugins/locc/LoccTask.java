@@ -79,8 +79,11 @@ public class LoccTask extends SourceTask implements Reporting<LoccReports> {
 
     @Override
     @SuppressWarnings("rawtypes")
-    public LoccReports reports(final Closure configureClosure) {
-        getProject().configure(this.reports, configureClosure);
+    public LoccReports reports(final Closure closure) {
+        final Closure cl = (Closure)closure.clone();
+        cl.setResolveStrategy(Closure.DELEGATE_FIRST);
+        cl.setDelegate(this.reports);
+        cl.call(this.reports);
         return this.reports;
     }
 

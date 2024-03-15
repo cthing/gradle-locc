@@ -50,10 +50,10 @@
     </element>
 
     <complexType name="loccSchema">
-        <choice>
+        <all>
             <element ref="lc:languages"/>
             <element ref="lc:files"/>
-        </choice>
+        </all>
         <attribute name="formatVersion" type="nonNegativeInteger" use="required">
             <annotation>
                 <documentation>

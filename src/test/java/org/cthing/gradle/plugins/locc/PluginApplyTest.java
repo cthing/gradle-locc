@@ -19,6 +19,7 @@ package org.cthing.gradle.plugins.locc;
 import java.io.File;
 
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -34,6 +35,16 @@ public class PluginApplyTest {
         project.getPluginManager().apply("org.cthing.locc");
 
         assertThat(project.getExtensions().findByName(LoccPlugin.EXTENSION_NAME)).isInstanceOf(LoccExtension.class);
-        assertThat(project.getTasks().findByName(LoccPlugin.COUNT_LINES_TASK_NAME)).isInstanceOf(LoccTask.class);
+
+        final Task task = project.getTasks().findByName(LoccPlugin.COUNT_LINES_TASK_NAME);
+        assertThat(task).isNotNull().isInstanceOf(LoccTask.class);
+        final LoccReports reports = ((LoccTask)task).getReports();
+        assertThat(reports.getXml().getRequired().get()).isTrue();
+        assertThat(reports.getHtml().getRequired().get()).isTrue();
+        assertThat(reports.getYaml().getRequired().get()).isFalse();
+        assertThat(reports.getJson().getRequired().get()).isFalse();
+        assertThat(reports.getCsv().getRequired().get()).isFalse();
+        assertThat(reports.getText().getRequired().get()).isFalse();
+        assertThat(reports.getDot().getRequired().get()).isFalse();
     }
 }
