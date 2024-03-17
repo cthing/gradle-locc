@@ -54,7 +54,7 @@
             <element ref="lc:languages"/>
             <element ref="lc:files"/>
         </all>
-        <attribute name="formatVersion" type="nonNegativeInteger" use="required">
+        <attribute name="formatVersion" type="nonNegativeInteger" use="required" fixed="1">
             <annotation>
                 <documentation>
                     The version of this schema.
