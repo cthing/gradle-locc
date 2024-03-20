@@ -23,12 +23,9 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -83,7 +80,7 @@ public final class XmlReport extends AbstractLoccReport {
             addAttribute(attrs, "xmlns:xsi", XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
             addAttribute(attrs, "xsi:schemaLocation", SCHEMA_URL + " " + SCHEMA_FILENAME);
             addAttribute(attrs, "formatVersion", FORMAT_VERSION);
-            addAttribute(attrs, "date", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.US).format(new Date()));
+            addAttribute(attrs, "date", timestamp());
             addAttribute(attrs, "projectName", this.task.getProject().getName());
             addAttribute(attrs, "projectVersion", this.task.getProject().getVersion().toString());
             xmlWriter.startElement(NAMESPACE, "locc", attrs);

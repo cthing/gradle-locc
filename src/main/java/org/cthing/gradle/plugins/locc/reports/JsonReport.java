@@ -16,21 +16,37 @@
 
 package org.cthing.gradle.plugins.locc.reports;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.cthing.jsonwriter.JsonWriter;
+import org.cthing.locc4j.CountUtils;
 import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.Language;
 import org.gradle.api.Task;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.tasks.TaskExecutionException;
 
 
 /**
  * Generates a line count report in <a href="https://www.json.org/json-en.html">JavaScript Object Notation</a>.
  */
 public final class JsonReport extends AbstractLoccReport {
+
+    private static final int FORMAT_VERSION = 1;
 
     @Inject
     public JsonReport(final Task task, final DirectoryProperty reportsDir) {
@@ -39,7 +55,100 @@ public final class JsonReport extends AbstractLoccReport {
     }
 
     @Override
-    public void generateReport(final Map<Path, Map<Language, Counts>> counts) {
+    public void generateReport(final Map<Path, Map<Language, Counts>> pathCounts) {
+        final Counts totalCounts = CountUtils.total(pathCounts);
+        final Set<Language> languages = CountUtils.languages(pathCounts);
 
+        final File destination = getOutputLocation().getAsFile().get();
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(destination.toPath()),
+                                                                       StandardCharsets.UTF_8))) {
+            final JsonWriter jsonWriter = new JsonWriter(writer);
+            jsonWriter.setPrettyPrint(true);
+
+            jsonWriter.startObject();
+
+            jsonWriter.member("formatVersion", FORMAT_VERSION)
+                      .member("date", timestamp())
+                      .member("projectName", this.task.getProject().getName())
+                      .member("projectVersion", this.task.getProject().getVersion().toString())
+                      .member("numFiles", pathCounts.size())
+                      .member("numUnrecognized", CountUtils.unrecognized(pathCounts).size())
+                      .member("numLanguages", languages.size());
+            writeCounts(jsonWriter, totalCounts);
+            writeLanguages(jsonWriter, pathCounts);
+            writeFiles(jsonWriter, pathCounts);
+
+            jsonWriter.endObject();
+        } catch (final IOException ex) {
+            throw new TaskExecutionException(this.task, ex);
+        }
+    }
+
+    private void writeLanguages(final JsonWriter jsonWriter, final Map<Path, Map<Language, Counts>> pathCounts)
+            throws IOException {
+        jsonWriter.memberStartArray("languages");
+
+        final Map<Language, Counts> langCounts = CountUtils.byLanguage(pathCounts);
+        final List<Language> languages = new ArrayList<>(langCounts.keySet());
+        languages.sort(Comparator.comparing(Language::getDisplayName));
+        for (final Language language : languages) {
+            jsonWriter.startObject();
+
+            jsonWriter.member("name", language.name())
+                      .member("displayName", language.getDisplayName())
+                      .member("description", language.getDescription())
+                      .member("website", language.getWebsite());
+            writeCounts(jsonWriter, langCounts.get(language));
+
+            jsonWriter.endObject();
+        }
+
+        jsonWriter.endArray();
+    }
+
+    private void writeFiles(final JsonWriter jsonWriter, final Map<Path, Map<Language, Counts>> pathCounts)
+            throws IOException {
+        jsonWriter.memberStartArray("files");
+
+        final Map<Path, Counts> pathTotals = CountUtils.byFile(pathCounts);
+        final Path rootProjectPath = this.task.getProject().getRootProject().getProjectDir().toPath();
+        final List<Path> paths = new ArrayList<>(pathCounts.keySet());
+        paths.sort(Path::compareTo);
+        for (final Path path : paths) {
+            jsonWriter.startObject();
+
+            final Map<Language, Counts> langCounts = pathCounts.get(path);
+            final Path relativePath = rootProjectPath.relativize(path);
+            jsonWriter.member("pathname", relativePath.toString())
+                      .member("numLanguages", langCounts.size());
+            writeCounts(jsonWriter, pathTotals.get(path));
+
+            jsonWriter.memberStartArray("languages");
+
+            final List<Language> languages = new ArrayList<>(langCounts.keySet());
+            languages.sort(Comparator.comparing(Language::getDisplayName));
+            for (final Language language : languages) {
+                jsonWriter.startObject();
+
+                jsonWriter.member("name", language.name());
+                writeCounts(jsonWriter, langCounts.get(language));
+
+                jsonWriter.endObject();
+            }
+
+            jsonWriter.endArray();
+
+
+            jsonWriter.endObject();
+        }
+
+        jsonWriter.endArray();
+    }
+
+    private void writeCounts(final JsonWriter jsonWriter, final Counts counts) throws IOException {
+        jsonWriter.member("totalLines", counts.getTotalLines())
+                  .member("codeLines", counts.getCodeLines())
+                  .member("commentLines", counts.getCommentLines())
+                  .member("blankLines", counts.getBlankLines());
     }
 }

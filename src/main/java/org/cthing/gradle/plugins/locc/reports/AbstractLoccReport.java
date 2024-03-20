@@ -17,6 +17,9 @@
 package org.cthing.gradle.plugins.locc.reports;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import org.gradle.api.Task;
 import org.gradle.api.file.RegularFileProperty;
@@ -103,5 +106,14 @@ abstract class AbstractLoccReport extends GroovyObjectSupport implements LoccRep
         cl.setDelegate(this);
         cl.call(this);
         return this;
+    }
+
+    /**
+     * Provides an ISO 8601 format timestamp.
+     *
+     * @return ISO 8601 format timestamp.
+     */
+    protected String timestamp() {
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.US).format(new Date());
     }
 }

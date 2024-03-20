@@ -1,0 +1,216 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "JsonWriter",
+  "description": "Lines-of-code counter report schema",
+  "type": "object",
+  "properties": {
+    "formatVersion": {
+      "description" : "Version of the report format",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1
+    },
+    "date": {
+      "description" : "ISO 8601 timestamp when the report was generated",
+      "type": "string",
+      "format": "date-time"
+    },
+    "projectName": {
+      "description": "Name of the project containing the counted files",
+      "type": "string"
+    },
+    "projectVersion": {
+      "description": "Version of the project containing the counted files",
+      "type": "string"
+    },
+    "numFiles": {
+      "description" : "Number of files counted",
+      "type": "integer",
+      "minimum": 0
+    },
+    "numUnrecognized": {
+      "description" : "Number of files that were not counted",
+      "type": "integer",
+      "minimum": 0
+    },
+    "numLanguages": {
+      "description" : "Number of computer languages detected in the counted files",
+      "type": "integer",
+      "minimum": 0
+    },
+    "totalLines": {
+      "description" : "Total number of lines counted",
+      "type": "integer",
+      "minimum": 0
+    },
+    "codeLines": {
+      "description" : "Total number of code lines counted",
+      "type" : "integer",
+      "minimum": 0
+    },
+    "commentLines": {
+      "description" : "Total number of comment lines counted",
+      "type": "integer",
+      "minimum": 0
+    },
+    "blankLines":  {
+      "description" : "Total number of blank lines counted",
+      "type": "integer",
+      "minimum": 0
+    },
+    "languages": {
+      "description" : "Counts and information for all computer languages detected in the counted files",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties" : {
+          "name": {
+            "description" : "Identifier for the language",
+            "type": "string"
+          },
+          "displayName": {
+            "description" : "Language name for display in user interfaces",
+            "type" : "string"
+          },
+          "descirption": {
+            "description" : "Description of the language",
+            "type": "string"
+          },
+          "website": {
+            "description" : "URL of the website providing information about the language",
+            "type": "string"
+          },
+          "totalLines": {
+            "description" : "Total number of lines counted for the language",
+            "type": "integer",
+            "minimum": 0
+          },
+          "codeLines": {
+            "description" : "Total number of code lines counted for the language",
+            "type" : "integer",
+            "minimum": 0
+          },
+          "commentLines": {
+            "description" : "Total number of comment lines counted for the language",
+            "type": "integer",
+            "minimum": 0
+          },
+          "blankLines":  {
+            "description" : "Total number of blank lines counted for the language",
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required" : [
+          "name",
+          "displayName",
+          "totalLines",
+          "codeLines",
+          "commentLines",
+          "blankLines"
+        ]
+      }
+    },
+    "files": {
+      "description" : "All files counted and unrecognized",
+      "type": "array",
+      "items" : {
+        "type": "object",
+        "properties" : {
+          "pathname": {
+            "description" : "Pathname of the file relative to the root of the project",
+            "type": "string"
+          },
+          "numLanguages": {
+            "description" : "Number of languages detected in the file",
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalLines": {
+            "description" : "Total number of lines in the file",
+            "type": "integer",
+            "minimum": 0
+          },
+          "codeLines": {
+            "description" : "Total number of code lines for all languages in the file",
+            "type" : "integer",
+            "minimum": 0
+          },
+          "commentLines": {
+            "description" : "Total number of comment lines for all languages in the file",
+            "type": "integer",
+            "minimum": 0
+          },
+          "blankLines":  {
+            "description" : "Total number of blank lines for all languages in the file",
+            "type": "integer",
+            "minimum": 0
+          },
+          "languages": {
+            "description" : "Counts for all computer languages detected in the file",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties" : {
+                "name": {
+                  "description" : "Identifier for the language",
+                  "type": "string"
+                },
+                "totalLines": {
+                  "description" : "Total number of lines counted for the language",
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "codeLines": {
+                  "description" : "Total number of code lines counted for the language",
+                  "type" : "integer",
+                  "minimum": 0
+                },
+                "commentLines": {
+                  "description" : "Total number of comment lines counted for the language",
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "blankLines":  {
+                  "description" : "Total number of blank lines counted for the language",
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required" : [
+                "name",
+                "totalLines",
+                "codeLines",
+                "commentLines",
+                "blankLines"
+              ]
+            }
+          }
+        },
+        "required" : [
+          "pathname",
+          "numLanguages",
+          "totalLines",
+          "codeLines",
+          "commentLines",
+          "blankLines"
+        ]
+      }
+    }
+  },
+  "required" : [
+    "formatVersion",
+    "date",
+    "projectName",
+    "projectVersion",
+    "numFiles",
+    "numUnrecognized",
+    "numLanguages",
+    "totalLines",
+    "codeLines",
+    "commentLines",
+    "blankLines",
+    "languages",
+    "files"
+  ]
+}

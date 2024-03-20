@@ -1,7 +1,6 @@
 [versions]
 java = "17"
-# Do not upgrade Checkstyle until https://github.com/checkstyle/checkstyle/issues/14123 is properly fixed
-checkstyle = "10.12.5"
+checkstyle = "10.14.2"
 jacoco = "0.8.11"
 junit = "5.10.2"
 spotbugs = "4.8.3"
@@ -16,6 +15,12 @@ assertJ = "org.assertj:assertj-core:3.25.3"
 commonsIO = "commons-io:commons-io:2.15.1"
 cthingAnnots = "org.cthing:cthing-annotations:1.0.0"
 locc4j = "org.cthing:locc4j:1.0.0-+"
+jacksonCoreUtils = "com.github.java-json-tools:jackson-coreutils:2.0"
+jacksonDatabind = "com.fasterxml.jackson.core:jackson-databind:2.11.0"
+jsonSchemaCore = "com.github.java-json-tools:json-schema-core:1.2.14"
+jsonSchemaValidator = "com.github.java-json-tools:json-schema-validator:2.2.14"
+jsonUnit = "net.javacrumbs.json-unit:json-unit-assertj:3.2.7"
+jsonWriter = "org.cthing:jsonwriter:1.0.0-+"
 jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
 junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }

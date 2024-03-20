@@ -56,10 +56,16 @@ dependencies {
     api(libs.locc4j)
 
     implementation(libs.cthingAnnots)
+    implementation(libs.jsonWriter)
     implementation(libs.xmlWriter)
 
     testImplementation(libs.assertJ)
     testImplementation(libs.commonsIO)
+    testImplementation(libs.jacksonCoreUtils)
+    testImplementation(libs.jacksonDatabind)
+    testImplementation(libs.jsonSchemaCore)
+    testImplementation(libs.jsonSchemaValidator)
+    testImplementation(libs.jsonUnit)
     testImplementation(libs.junitApi)
     testImplementation(libs.xmlAssertJ)
     testImplementation(libs.xmlPlaceholders)

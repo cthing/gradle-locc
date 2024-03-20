@@ -23,6 +23,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import javax.xml.transform.stream.StreamSource;
+
 import org.apache.commons.io.FileUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.BuildTask;
@@ -31,12 +33,25 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.xmlunit.assertj3.XmlAssert;
 import org.xmlunit.placeholder.PlaceholderDifferenceEvaluator;
+import org.xmlunit.validation.Languages;
+import org.xmlunit.validation.Validator;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jackson.JsonLoader;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
+import com.github.fge.jsonschema.main.JsonSchema;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import com.github.fge.jsonschema.processors.syntax.SyntaxValidator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gradle.testkit.runner.TaskOutcome.NO_SOURCE;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
+
+@SuppressWarnings("DataFlowIssue")
 public class PluginIntegTest {
 
     @Test
@@ -77,7 +92,25 @@ public class PluginIntegTest {
     }
 
     @Test
-    public void testSimpleProject(@TempDir final File projectDir) throws IOException {
+    public void testXmlSchema() throws IOException {
+        try (InputStream schema = getClass().getResourceAsStream("/org/cthing/gradle/plugins/locc/locc-1.xsd")) {
+            final Validator validator = Validator.forLanguage(Languages.W3C_XML_SCHEMA_NS_URI);
+            validator.setSchemaSource(new StreamSource(schema));
+            assertThat(validator.validateSchema().isValid()).isTrue();
+        }
+    }
+
+    @Test
+    public void testJsonSchema() throws IOException {
+        final JsonSchemaFactory schemaFactory = JsonSchemaFactory.byDefault();
+        final SyntaxValidator validator = schemaFactory.getSyntaxValidator();
+        final File schema = new File(getClass().getResource("/org/cthing/gradle/plugins/locc/locc-1.json").getPath());
+        final JsonNode rootNode = JsonLoader.fromFile(schema);
+        assertThat(validator.validateSchema(rootNode).isSuccess()).isTrue();
+    }
+
+    @Test
+    public void testSimpleProject(@TempDir final File projectDir) throws IOException, ProcessingException {
         final URL projectUrl = getClass().getResource("/simple-project");
         assertThat(projectUrl).isNotNull();
         FileUtils.copyDirectory(new File(projectUrl.getPath()), projectDir);
@@ -93,10 +126,11 @@ public class PluginIntegTest {
         assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(SUCCESS);
 
         verifyXmlReport(projectDir, "/reports/simple-project");
+        verifyJsonReport(projectDir, "/reports/simple-project");
     }
 
     @Test
-    public void testComplexProject(@TempDir final File projectDir) throws IOException {
+    public void testComplexProject(@TempDir final File projectDir) throws IOException, ProcessingException {
         final URL projectUrl = getClass().getResource("/complex-project");
         assertThat(projectUrl).isNotNull();
         FileUtils.copyDirectory(new File(projectUrl.getPath()), projectDir);
@@ -112,17 +146,48 @@ public class PluginIntegTest {
         assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(SUCCESS);
 
         verifyXmlReport(projectDir, "/reports/complex-project");
+        verifyJsonReport(projectDir, "/reports/complex-project");
     }
 
     private void verifyXmlReport(final File projectDir, final String reportsDir) throws IOException {
         try (InputStream expectedReport = getClass().getResourceAsStream(reportsDir + "/locc.xml");
              InputStream schema = getClass().getResourceAsStream("/org/cthing/gradle/plugins/locc/locc-1.xsd")) {
             final File actualReport = new File(projectDir, "build/reports/locc/locc.xml");
+            showReport(actualReport);
             XmlAssert.assertThat(actualReport).isValidAgainst(schema);
             XmlAssert.assertThat(actualReport)
                      .and(expectedReport)
                      .withDifferenceEvaluator(new PlaceholderDifferenceEvaluator())
                      .areIdentical();
+        }
+    }
+
+    private void verifyJsonReport(final File projectDir, final String reportsDir)
+            throws IOException, ProcessingException {
+        final File expectedReport = new File(getClass().getResource(reportsDir + "/locc.json").getPath());
+        final File actualReport = new File(projectDir, "build/reports/locc/locc.json");
+        showReport(actualReport);
+
+        final String expectedJson = Files.readString(expectedReport.toPath());
+        final String actualJson = Files.readString(actualReport.toPath());
+
+        assertThatJson(actualJson).isEqualTo(expectedJson);
+
+        final JsonSchemaFactory schemaFactory = JsonSchemaFactory.byDefault();
+        final File schemaFile = new File(getClass().getResource("/org/cthing/gradle/plugins/locc/locc-1.json").getPath());
+        final JsonNode schema = JsonLoader.fromFile(schemaFile);
+        final JsonSchema validator = schemaFactory.getJsonSchema(schema);
+
+        final JsonNode rootNode = JsonLoader.fromFile(actualReport);
+        final ProcessingReport report = validator.validate(rootNode);
+        assertThat(report.isSuccess()).isTrue();
+    }
+
+    private void showReport(final File report) throws IOException {
+        if (System.getenv("CTHING_INTEG_TEST") != null) {
+            System.out.println(report.getName() + " " + "-".repeat(60));
+            System.out.print(Files.readString(report.toPath()));
+            System.out.println("-".repeat(70));
         }
     }
 }
