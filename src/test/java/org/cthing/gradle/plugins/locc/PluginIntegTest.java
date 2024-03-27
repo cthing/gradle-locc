@@ -41,12 +41,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.core.report.ProcessingMessage;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.github.fge.jsonschema.processors.syntax.SyntaxValidator;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.gradle.testkit.runner.TaskOutcome.NO_SOURCE;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 
@@ -130,6 +132,7 @@ public class PluginIntegTest {
         verifyXmlReport(projectDir, "/reports/simple-project");
         verifyJsonReport(projectDir, "/reports/simple-project");
         verifyYamlReport(projectDir, "/reports/simple-project");
+        verifyTextReport(projectDir, "/reports/simple-project");
     }
 
     @Test
@@ -151,6 +154,7 @@ public class PluginIntegTest {
         verifyXmlReport(projectDir, "/reports/complex-project");
         verifyJsonReport(projectDir, "/reports/complex-project");
         verifyYamlReport(projectDir, "/reports/complex-project");
+        verifyTextReport(projectDir, "/reports/complex-project");
     }
 
     private void verifyXmlReport(final File projectDir, final String reportsDir) throws IOException {
@@ -181,7 +185,13 @@ public class PluginIntegTest {
         final JsonSchema validator = createJsonValidator();
         final JsonNode rootNode = JsonLoader.fromFile(actualReport);
         final ProcessingReport report = validator.validate(rootNode);
-        assertThat(report.isSuccess()).isTrue();
+        if (!report.isSuccess()) {
+            final StringBuilder buffer = new StringBuilder("Validation of JSON report failed.\n");
+            for (final ProcessingMessage msg : report) {
+                buffer.append(msg.getMessage()).append('\n');
+            }
+            fail(buffer.toString());
+        }
     }
 
     private void verifyYamlReport(final File projectDir, final String reportsDir)
@@ -201,7 +211,25 @@ public class PluginIntegTest {
         final YAMLFactory factory = new YAMLFactory();
         final JsonNode rootNode = new ObjectMapper().readTree(factory.createParser(actualYaml));
         final ProcessingReport report = validator.validate(rootNode);
-        assertThat(report.isSuccess()).isTrue();
+        if (!report.isSuccess()) {
+            final StringBuilder buffer = new StringBuilder("Validation of YAML report failed.\n");
+            for (final ProcessingMessage msg : report) {
+                buffer.append(msg.getMessage()).append('\n');
+            }
+            fail(buffer.toString());
+        }
+    }
+
+    private void verifyTextReport(final File projectDir, final String reportsDir) throws IOException {
+        final File expectedReport = new File(getClass().getResource(reportsDir + "/locc.txt").getPath());
+        final File actualReport = new File(projectDir, "build/reports/locc/locc.txt");
+        assertThat(actualReport).isReadable();
+        showReport(actualReport);
+
+        final String expectedText = Files.readString(expectedReport.toPath());
+        final String actualText = Files.readString(actualReport.toPath())
+                                       .replaceFirst("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}-\\d{2}:\\d{2}", "ignore");
+        assertThat(actualText).isEqualTo(expectedText);
     }
 
     private JsonSchema createJsonValidator() throws IOException, ProcessingException {

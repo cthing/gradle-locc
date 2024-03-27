@@ -16,15 +16,28 @@
 
 package org.cthing.gradle.plugins.locc.reports;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.cthing.locc4j.CountUtils;
 import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.Language;
 import org.gradle.api.Task;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.tasks.TaskExecutionException;
 
 
 /**
@@ -39,7 +52,104 @@ public final class TextReport extends AbstractLoccReport {
     }
 
     @Override
-    public void generateReport(final Map<Path, Map<Language, Counts>> counts) {
+    public void generateReport(final Map<Path, Map<Language, Counts>> pathCounts) {
+        final Counts totalCounts = CountUtils.total(pathCounts);
+        final Set<Language> languages = CountUtils.languages(pathCounts);
 
+        final File destination = getOutputLocation().getAsFile().get();
+        try (BufferedWriter writer =
+                     new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(destination.toPath()),
+                                                               StandardCharsets.UTF_8))) {
+            writer.write("Line Count Report For ");
+            writeln(writer, this.task.getProject().getName());
+            writeln(writer, "-".repeat(80));
+            writeln(writer, "Date: ", timestamp());
+            writeln(writer, "Project version: ", this.task.getProject().getVersion().toString());
+            writeln(writer, "Number of files: ", pathCounts.size());
+            writeln(writer, "Number unrecognized files: ", CountUtils.unrecognized(pathCounts).size());
+            writeln(writer, "Number of languages: ", languages.size());
+            writeln(writer, "Total lines: ", totalCounts.getTotalLines());
+            writeln(writer, "Code lines: ", totalCounts.getCodeLines());
+            writeln(writer, "Comment lines: ", totalCounts.getCommentLines());
+            writeln(writer, "Blank lines: ", totalCounts.getBlankLines());
+            writeLanguages(writer, pathCounts);
+            writeFiles(writer, pathCounts);
+        } catch (final IOException ex) {
+            throw new TaskExecutionException(this.task, ex);
+        }
+
+    }
+
+    private void writeLanguages(final BufferedWriter writer, final Map<Path, Map<Language, Counts>> pathCounts)
+            throws IOException {
+        writer.newLine();
+        writeln(writer, "Languages");
+        writeln(writer, "-".repeat(9));
+
+        final Map<Language, Counts> langCounts = CountUtils.byLanguage(pathCounts);
+        final List<Language> languages = new ArrayList<>(langCounts.keySet());
+        languages.sort(Comparator.comparing(Language::getDisplayName));
+        for (final Language language : languages) {
+            final String description = language.getDescription();
+            if (description == null) {
+                writeln(writer, String.format("%s", language.getDisplayName()));
+            } else {
+                writeln(writer, String.format("%s: %s", language.getDisplayName(), description));
+            }
+
+            writeCounts(writer, langCounts.get(language));
+            writer.newLine();
+        }
+    }
+
+    private void writeFiles(final BufferedWriter writer, final Map<Path, Map<Language, Counts>> pathCounts)
+            throws IOException {
+        writeln(writer, "Files");
+        writeln(writer, "-".repeat(5));
+
+        final Map<Path, Counts> pathTotals = CountUtils.byFile(pathCounts);
+        final Path rootProjectPath = this.task.getProject().getRootProject().getProjectDir().toPath();
+        final List<Path> paths = new ArrayList<>(pathCounts.keySet());
+        paths.sort(Path::compareTo);
+        boolean first = true;
+        for (final Path path : paths) {
+            if (!first) {
+                writer.newLine();
+            }
+            first = false;
+
+            final Map<Language, Counts> langCounts = pathCounts.get(path);
+            final Path relativePath = rootProjectPath.relativize(path);
+            writeln(writer, relativePath.toString());
+            writeCounts(writer, pathTotals.get(path));
+
+            final List<Language> languages = new ArrayList<>(langCounts.keySet());
+            languages.sort(Comparator.comparing(Language::getDisplayName));
+            writer.write("    Languages: ");
+            writeln(writer, languages.stream().map(Language::getDisplayName).collect(Collectors.joining(", ")));
+        }
+    }
+
+    private void writeCounts(final BufferedWriter writer, final Counts counts) throws IOException {
+        writeln(writer, String.format("    Lines: %d total, %d code, %d comment, %d blank",
+                                      counts.getTotalLines(), counts.getCodeLines(),
+                                      counts.getCommentLines(), counts.getBlankLines()));
+    }
+
+    private void writeln(final BufferedWriter writer, final String str1, final String str2) throws IOException {
+        writer.write(str1);
+        writer.write(str2);
+        writer.newLine();
+    }
+
+    private void writeln(final BufferedWriter writer, final String str, final int val) throws IOException {
+        writer.write(str);
+        writer.write(Integer.toString(val, 10));
+        writer.newLine();
+    }
+
+    private void writeln(final BufferedWriter writer, final String str) throws IOException {
+        writer.write(str);
+        writer.newLine();
     }
 }

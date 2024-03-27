@@ -1,0 +1,78 @@
+Line Count Report For complex-project
+--------------------------------------------------------------------------------
+Date: ignore
+Project version: unspecified
+Number of files: 12
+Number unrecognized files: 0
+Number of languages: 5
+Total lines: 148
+Code lines: 82
+Comment lines: 44
+Blank lines: 22
+
+Languages
+---------
+C Header: C programming language header file.
+    Lines: 13 total, 10 code, 0 comment, 3 blank
+
+C++: C++ programming language source file.
+    Lines: 21 total, 18 code, 0 comment, 3 blank
+
+Java: Java programming language.
+    Lines: 76 total, 22 code, 44 comment, 10 blank
+
+Kotlin: Kotlin programming language.
+    Lines: 18 total, 15 code, 0 comment, 3 blank
+
+Swift: Swift programming language.
+    Lines: 20 total, 17 code, 0 comment, 3 blank
+
+Files
+-----
+project1/src/main/java/com/cthing/project1/HelloWorld.java
+    Lines: 29 total, 10 code, 15 comment, 4 blank
+    Languages: Java
+
+project1/src/main/java/com/cthing/project1/package-info.java
+    Lines: 9 total, 1 code, 7 comment, 1 blank
+    Languages: Java
+
+project2/src/main/java/com/cthing/project2/GoodbyeWorld.java
+    Lines: 29 total, 10 code, 15 comment, 4 blank
+    Languages: Java
+
+project2/src/main/java/com/cthing/project2/package-info.java
+    Lines: 9 total, 1 code, 7 comment, 1 blank
+    Languages: Java
+
+project3/src/main/cpp/app.cpp
+    Lines: 13 total, 11 code, 0 comment, 2 blank
+    Languages: C++
+
+project3/src/main/headers/app.h
+    Lines: 13 total, 10 code, 0 comment, 3 blank
+    Languages: C Header
+
+project3/src/test/cpp/app_test.cpp
+    Lines: 8 total, 7 code, 0 comment, 1 blank
+    Languages: C++
+
+project4/src/main/swift/Hello.swift
+    Lines: 5 total, 5 code, 0 comment, 0 blank
+    Languages: Swift
+
+project4/src/test/swift/HelloTests.swift
+    Lines: 12 total, 10 code, 0 comment, 2 blank
+    Languages: Swift
+
+project4/src/test/swift/LinuxMain.swift
+    Lines: 3 total, 2 code, 0 comment, 1 blank
+    Languages: Swift
+
+project5/src/main/kotlin/org/example/Library.kt
+    Lines: 7 total, 6 code, 0 comment, 1 blank
+    Languages: Kotlin
+
+project5/src/test/kotlin/org/example/LibraryTest.kt
+    Lines: 11 total, 9 code, 0 comment, 2 blank
+    Languages: Kotlin
