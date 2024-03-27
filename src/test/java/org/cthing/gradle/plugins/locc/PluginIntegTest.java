@@ -37,6 +37,8 @@ import org.xmlunit.validation.Languages;
 import org.xmlunit.validation.Validator;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
@@ -127,6 +129,7 @@ public class PluginIntegTest {
 
         verifyXmlReport(projectDir, "/reports/simple-project");
         verifyJsonReport(projectDir, "/reports/simple-project");
+        verifyYamlReport(projectDir, "/reports/simple-project");
     }
 
     @Test
@@ -147,12 +150,14 @@ public class PluginIntegTest {
 
         verifyXmlReport(projectDir, "/reports/complex-project");
         verifyJsonReport(projectDir, "/reports/complex-project");
+        verifyYamlReport(projectDir, "/reports/complex-project");
     }
 
     private void verifyXmlReport(final File projectDir, final String reportsDir) throws IOException {
         try (InputStream expectedReport = getClass().getResourceAsStream(reportsDir + "/locc.xml");
              InputStream schema = getClass().getResourceAsStream("/org/cthing/gradle/plugins/locc/locc-1.xsd")) {
             final File actualReport = new File(projectDir, "build/reports/locc/locc.xml");
+            assertThat(actualReport).isReadable();
             showReport(actualReport);
             XmlAssert.assertThat(actualReport).isValidAgainst(schema);
             XmlAssert.assertThat(actualReport)
@@ -166,21 +171,44 @@ public class PluginIntegTest {
             throws IOException, ProcessingException {
         final File expectedReport = new File(getClass().getResource(reportsDir + "/locc.json").getPath());
         final File actualReport = new File(projectDir, "build/reports/locc/locc.json");
+        assertThat(actualReport).isReadable();
         showReport(actualReport);
 
         final String expectedJson = Files.readString(expectedReport.toPath());
         final String actualJson = Files.readString(actualReport.toPath());
-
         assertThatJson(actualJson).isEqualTo(expectedJson);
 
-        final JsonSchemaFactory schemaFactory = JsonSchemaFactory.byDefault();
-        final File schemaFile = new File(getClass().getResource("/org/cthing/gradle/plugins/locc/locc-1.json").getPath());
-        final JsonNode schema = JsonLoader.fromFile(schemaFile);
-        final JsonSchema validator = schemaFactory.getJsonSchema(schema);
-
+        final JsonSchema validator = createJsonValidator();
         final JsonNode rootNode = JsonLoader.fromFile(actualReport);
         final ProcessingReport report = validator.validate(rootNode);
         assertThat(report.isSuccess()).isTrue();
+    }
+
+    private void verifyYamlReport(final File projectDir, final String reportsDir)
+            throws IOException, ProcessingException {
+        final File expectedReport = new File(getClass().getResource(reportsDir + "/locc.yaml").getPath());
+        final File actualReport = new File(projectDir, "build/reports/locc/locc.yaml");
+        assertThat(actualReport).isReadable();
+        showReport(actualReport);
+
+        final String expectedYaml = Files.readString(expectedReport.toPath());
+        final String actualYaml = Files.readString(actualReport.toPath());
+        final String noTimestampYaml =
+                actualYaml.replaceFirst("'\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}-\\d{2}:\\d{2}'", "'ignore'");
+        assertThat(noTimestampYaml).isEqualTo(expectedYaml);
+
+        final JsonSchema validator = createJsonValidator();
+        final YAMLFactory factory = new YAMLFactory();
+        final JsonNode rootNode = new ObjectMapper().readTree(factory.createParser(actualYaml));
+        final ProcessingReport report = validator.validate(rootNode);
+        assertThat(report.isSuccess()).isTrue();
+    }
+
+    private JsonSchema createJsonValidator() throws IOException, ProcessingException {
+        final JsonSchemaFactory schemaFactory = JsonSchemaFactory.byDefault();
+        final File schemaFile = new File(getClass().getResource("/org/cthing/gradle/plugins/locc/locc-1.json").getPath());
+        final JsonNode schema = JsonLoader.fromFile(schemaFile);
+        return schemaFactory.getJsonSchema(schema);
     }
 
     private void showReport(final File report) throws IOException {
