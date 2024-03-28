@@ -133,6 +133,7 @@ public class PluginIntegTest {
         verifyJsonReport(projectDir, "/reports/simple-project");
         verifyYamlReport(projectDir, "/reports/simple-project");
         verifyTextReport(projectDir, "/reports/simple-project");
+        verifyCsvReport(projectDir, "/reports/simple-project");
     }
 
     @Test
@@ -155,6 +156,7 @@ public class PluginIntegTest {
         verifyJsonReport(projectDir, "/reports/complex-project");
         verifyYamlReport(projectDir, "/reports/complex-project");
         verifyTextReport(projectDir, "/reports/complex-project");
+        verifyCsvReport(projectDir, "/reports/complex-project");
     }
 
     private void verifyXmlReport(final File projectDir, final String reportsDir) throws IOException {
@@ -230,6 +232,14 @@ public class PluginIntegTest {
         final String actualText = Files.readString(actualReport.toPath())
                                        .replaceFirst("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}-\\d{2}:\\d{2}", "ignore");
         assertThat(actualText).isEqualTo(expectedText);
+    }
+
+    private void verifyCsvReport(final File projectDir, final String reportsDir) throws IOException {
+        final File expectedReport = new File(getClass().getResource(reportsDir + "/locc.csv").getPath());
+        final File actualReport = new File(projectDir, "build/reports/locc/locc.csv");
+        showReport(actualReport);
+
+        assertThat(actualReport).hasSameTextualContentAs(expectedReport);
     }
 
     private JsonSchema createJsonValidator() throws IOException, ProcessingException {
