@@ -23,7 +23,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -33,7 +32,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.cthing.annotations.AccessForTesting;
-import org.cthing.locc4j.CountUtils;
+import org.cthing.gradle.plugins.locc.CountsCache;
 import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.Language;
 import org.gradle.api.Task;
@@ -54,8 +53,8 @@ public final class CsvReport extends AbstractLoccReport {
     }
 
     @Override
-    public void generateReport(final Map<Path, Map<Language, Counts>> pathCounts) {
-        final Counts totalCounts = CountUtils.total(pathCounts);
+    public void generateReport(final CountsCache countsCache) {
+        final Counts totalCounts = countsCache.getTotalCounts();
 
         final File destination = getOutputLocation().getAsFile().get();
         try (BufferedWriter writer =
@@ -66,7 +65,7 @@ public final class CsvReport extends AbstractLoccReport {
                                           totalCounts.getTotalLines(), totalCounts.getCodeLines(),
                                           totalCounts.getCommentLines(), totalCounts.getBlankLines()));
 
-            final Map<Language, Counts> langCounts = CountUtils.byLanguage(pathCounts);
+            final Map<Language, Counts> langCounts = countsCache.getLanguageCounts();
             final List<Language> languages = new ArrayList<>(langCounts.keySet());
             languages.sort(Comparator.comparing(Language::getDisplayName));
             for (final Language language : languages) {

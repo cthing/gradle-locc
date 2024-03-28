@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.cthing.locc4j.CountUtils;
+import org.cthing.gradle.plugins.locc.CountsCache;
 import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.Language;
 import org.gradle.api.Task;
@@ -52,9 +52,9 @@ public final class TextReport extends AbstractLoccReport {
     }
 
     @Override
-    public void generateReport(final Map<Path, Map<Language, Counts>> pathCounts) {
-        final Counts totalCounts = CountUtils.total(pathCounts);
-        final Set<Language> languages = CountUtils.languages(pathCounts);
+    public void generateReport(final CountsCache countsCache) {
+        final Counts totalCounts = countsCache.getTotalCounts();
+        final Set<Language> languages = countsCache.getLanguages();
 
         final File destination = getOutputLocation().getAsFile().get();
         try (BufferedWriter writer =
@@ -65,28 +65,27 @@ public final class TextReport extends AbstractLoccReport {
             writeln(writer, "-".repeat(80));
             writeln(writer, "Date: ", timestamp());
             writeln(writer, "Project version: ", this.task.getProject().getVersion().toString());
-            writeln(writer, "Number of files: ", pathCounts.size());
-            writeln(writer, "Number unrecognized files: ", CountUtils.unrecognized(pathCounts).size());
+            writeln(writer, "Number of files: ", countsCache.getPathCounts().size());
+            writeln(writer, "Number unrecognized files: ", countsCache.getUnrecognized().size());
             writeln(writer, "Number of languages: ", languages.size());
             writeln(writer, "Total lines: ", totalCounts.getTotalLines());
             writeln(writer, "Code lines: ", totalCounts.getCodeLines());
             writeln(writer, "Comment lines: ", totalCounts.getCommentLines());
             writeln(writer, "Blank lines: ", totalCounts.getBlankLines());
-            writeLanguages(writer, pathCounts);
-            writeFiles(writer, pathCounts);
+            writeLanguages(writer, countsCache);
+            writeFiles(writer, countsCache);
         } catch (final IOException ex) {
             throw new TaskExecutionException(this.task, ex);
         }
 
     }
 
-    private void writeLanguages(final BufferedWriter writer, final Map<Path, Map<Language, Counts>> pathCounts)
-            throws IOException {
+    private void writeLanguages(final BufferedWriter writer, final CountsCache countsCache) throws IOException {
         writer.newLine();
         writeln(writer, "Languages");
         writeln(writer, "-".repeat(9));
 
-        final Map<Language, Counts> langCounts = CountUtils.byLanguage(pathCounts);
+        final Map<Language, Counts> langCounts = countsCache.getLanguageCounts();
         final List<Language> languages = new ArrayList<>(langCounts.keySet());
         languages.sort(Comparator.comparing(Language::getDisplayName));
         for (final Language language : languages) {
@@ -102,14 +101,13 @@ public final class TextReport extends AbstractLoccReport {
         }
     }
 
-    private void writeFiles(final BufferedWriter writer, final Map<Path, Map<Language, Counts>> pathCounts)
-            throws IOException {
+    private void writeFiles(final BufferedWriter writer, final CountsCache countsCache) throws IOException {
         writeln(writer, "Files");
         writeln(writer, "-".repeat(5));
 
-        final Map<Path, Counts> pathTotals = CountUtils.byFile(pathCounts);
+        final Map<Path, Counts> pathTotals = countsCache.getFileCounts();
         final Path rootProjectPath = this.task.getProject().getRootProject().getProjectDir().toPath();
-        final List<Path> paths = new ArrayList<>(pathCounts.keySet());
+        final List<Path> paths = new ArrayList<>(countsCache.getPathCounts().keySet());
         paths.sort(Path::compareTo);
         boolean first = true;
         for (final Path path : paths) {
@@ -118,7 +116,7 @@ public final class TextReport extends AbstractLoccReport {
             }
             first = false;
 
-            final Map<Language, Counts> langCounts = pathCounts.get(path);
+            final Map<Language, Counts> langCounts = countsCache.getPathCounts().get(path);
             final Path relativePath = rootProjectPath.relativize(path);
             writeln(writer, relativePath.toString());
             writeCounts(writer, pathTotals.get(path));

@@ -16,13 +16,9 @@
 
 package org.cthing.gradle.plugins.locc.reports;
 
-import java.nio.file.Path;
-import java.util.Map;
-
 import javax.inject.Inject;
 
-import org.cthing.locc4j.Counts;
-import org.cthing.locc4j.Language;
+import org.cthing.gradle.plugins.locc.CountsCache;
 import org.gradle.api.Task;
 import org.gradle.api.file.DirectoryProperty;
 
@@ -39,7 +35,7 @@ public final class DotReport extends AbstractLoccReport {
     }
 
     @Override
-    public void generateReport(final Map<Path, Map<Language, Counts>> counts) {
+    public void generateReport(final CountsCache countsCache) {
 
     }
 }

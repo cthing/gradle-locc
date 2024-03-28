@@ -105,18 +105,19 @@ public class LoccTask extends SourceTask implements Reporting<LoccReports> {
     }
 
     private void generateReports(final Map<Path, Map<Language, Counts>> counts) {
-        generateReport(this.reports.getXml(), counts);
-        generateReport(this.reports.getHtml(), counts);
-        generateReport(this.reports.getYaml(), counts);
-        generateReport(this.reports.getJson(), counts);
-        generateReport(this.reports.getCsv(), counts);
-        generateReport(this.reports.getText(), counts);
-        generateReport(this.reports.getDot(), counts);
+        final CountsCache countsCache = new CountsCache(counts);
+        generateReport(this.reports.getXml(), countsCache);
+        generateReport(this.reports.getHtml(), countsCache);
+        generateReport(this.reports.getYaml(), countsCache);
+        generateReport(this.reports.getJson(), countsCache);
+        generateReport(this.reports.getCsv(), countsCache);
+        generateReport(this.reports.getText(), countsCache);
+        generateReport(this.reports.getDot(), countsCache);
     }
 
-    private void generateReport(final LoccReport report, final Map<Path, Map<Language, Counts>> counts) {
+    private void generateReport(final LoccReport report, final CountsCache countsCache) {
         if (report.getRequired().get()) {
-            report.generateReport(counts);
+            report.generateReport(countsCache);
         }
     }
 }

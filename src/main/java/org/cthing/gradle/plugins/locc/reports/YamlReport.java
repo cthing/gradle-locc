@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.cthing.annotations.AccessForTesting;
-import org.cthing.locc4j.CountUtils;
+import org.cthing.gradle.plugins.locc.CountsCache;
 import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.Language;
 import org.gradle.api.Task;
@@ -65,9 +65,9 @@ public final class YamlReport extends AbstractLoccReport {
     }
 
     @Override
-    public void generateReport(final Map<Path, Map<Language, Counts>> pathCounts) {
-        final Counts totalCounts = CountUtils.total(pathCounts);
-        final Set<Language> languages = CountUtils.languages(pathCounts);
+    public void generateReport(final CountsCache countsCache) {
+        final Counts totalCounts = countsCache.getTotalCounts();
+        final Set<Language> languages = countsCache.getLanguages();
 
         final File destination = getOutputLocation().getAsFile().get();
         try (BufferedWriter writer =
@@ -78,23 +78,22 @@ public final class YamlReport extends AbstractLoccReport {
             writeln(writer, "date: ", timestamp());
             writeln(writer, "projectName: ", this.task.getProject().getName());
             writeln(writer, "projectVersion: ", this.task.getProject().getVersion().toString());
-            writeln(writer, "numFiles: ", pathCounts.size());
-            writeln(writer, "numUnrecognized: ", CountUtils.unrecognized(pathCounts).size());
+            writeln(writer, "numFiles: ", countsCache.getPathCounts().size());
+            writeln(writer, "numUnrecognized: ", countsCache.getUnrecognized().size());
             writeln(writer, "numLanguages: ", languages.size());
             writeCounts(writer, null, totalCounts);
-            writeLanguages(writer, pathCounts);
-            writeFiles(writer, pathCounts);
+            writeLanguages(writer, countsCache);
+            writeFiles(writer, countsCache);
             writeln(writer, "...");
         } catch (final IOException ex) {
             throw new TaskExecutionException(this.task, ex);
         }
     }
 
-    private void writeLanguages(final BufferedWriter writer, final Map<Path, Map<Language, Counts>> pathCounts)
-            throws IOException {
+    private void writeLanguages(final BufferedWriter writer, final CountsCache countsCache) throws IOException {
         writeln(writer, "languages:");
 
-        final Map<Language, Counts> langCounts = CountUtils.byLanguage(pathCounts);
+        final Map<Language, Counts> langCounts = countsCache.getLanguageCounts();
         final List<Language> languages = new ArrayList<>(langCounts.keySet());
         languages.sort(Comparator.comparing(Language::getDisplayName));
         for (final Language language : languages) {
@@ -106,16 +105,15 @@ public final class YamlReport extends AbstractLoccReport {
         }
     }
 
-    private void writeFiles(final BufferedWriter writer, final Map<Path, Map<Language, Counts>> pathCounts)
-            throws IOException {
+    private void writeFiles(final BufferedWriter writer, final CountsCache countsCache) throws IOException {
         writeln(writer, "files:");
 
-        final Map<Path, Counts> pathTotals = CountUtils.byFile(pathCounts);
+        final Map<Path, Counts> pathTotals = countsCache.getFileCounts();
         final Path rootProjectPath = this.task.getProject().getRootProject().getProjectDir().toPath();
-        final List<Path> paths = new ArrayList<>(pathCounts.keySet());
+        final List<Path> paths = new ArrayList<>(countsCache.getPathCounts().keySet());
         paths.sort(Path::compareTo);
         for (final Path path : paths) {
-            final Map<Language, Counts> langCounts = pathCounts.get(path);
+            final Map<Language, Counts> langCounts = countsCache.getPathCounts().get(path);
             final Path relativePath = rootProjectPath.relativize(path);
             writeln(writer, "  - pathname: ", relativePath.toString());
             writeln(writer, "    numLanguages: ", langCounts.size());

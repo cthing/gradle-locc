@@ -32,8 +32,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.cthing.gradle.plugins.locc.CountsCache;
 import org.cthing.jsonwriter.JsonWriter;
-import org.cthing.locc4j.CountUtils;
 import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.Language;
 import org.gradle.api.Task;
@@ -55,9 +55,9 @@ public final class JsonReport extends AbstractLoccReport {
     }
 
     @Override
-    public void generateReport(final Map<Path, Map<Language, Counts>> pathCounts) {
-        final Counts totalCounts = CountUtils.total(pathCounts);
-        final Set<Language> languages = CountUtils.languages(pathCounts);
+    public void generateReport(final CountsCache countsCache) {
+        final Counts totalCounts = countsCache.getTotalCounts();
+        final Set<Language> languages = countsCache.getLanguages();
 
         final File destination = getOutputLocation().getAsFile().get();
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(destination.toPath()),
@@ -71,12 +71,12 @@ public final class JsonReport extends AbstractLoccReport {
                       .member("date", timestamp())
                       .member("projectName", this.task.getProject().getName())
                       .member("projectVersion", this.task.getProject().getVersion().toString())
-                      .member("numFiles", pathCounts.size())
-                      .member("numUnrecognized", CountUtils.unrecognized(pathCounts).size())
+                      .member("numFiles", countsCache.getPathCounts().size())
+                      .member("numUnrecognized", countsCache.getUnrecognized().size())
                       .member("numLanguages", languages.size());
             writeCounts(jsonWriter, totalCounts);
-            writeLanguages(jsonWriter, pathCounts);
-            writeFiles(jsonWriter, pathCounts);
+            writeLanguages(jsonWriter, countsCache);
+            writeFiles(jsonWriter, countsCache);
 
             jsonWriter.endObject();
         } catch (final IOException ex) {
@@ -84,11 +84,10 @@ public final class JsonReport extends AbstractLoccReport {
         }
     }
 
-    private void writeLanguages(final JsonWriter jsonWriter, final Map<Path, Map<Language, Counts>> pathCounts)
-            throws IOException {
+    private void writeLanguages(final JsonWriter jsonWriter, final CountsCache countsCache) throws IOException {
         jsonWriter.memberStartArray("languages");
 
-        final Map<Language, Counts> langCounts = CountUtils.byLanguage(pathCounts);
+        final Map<Language, Counts> langCounts = countsCache.getLanguageCounts();
         final List<Language> languages = new ArrayList<>(langCounts.keySet());
         languages.sort(Comparator.comparing(Language::getDisplayName));
         for (final Language language : languages) {
@@ -106,18 +105,17 @@ public final class JsonReport extends AbstractLoccReport {
         jsonWriter.endArray();
     }
 
-    private void writeFiles(final JsonWriter jsonWriter, final Map<Path, Map<Language, Counts>> pathCounts)
-            throws IOException {
+    private void writeFiles(final JsonWriter jsonWriter, final CountsCache countsCache) throws IOException {
         jsonWriter.memberStartArray("files");
 
-        final Map<Path, Counts> pathTotals = CountUtils.byFile(pathCounts);
+        final Map<Path, Counts> pathTotals = countsCache.getFileCounts();
         final Path rootProjectPath = this.task.getProject().getRootProject().getProjectDir().toPath();
-        final List<Path> paths = new ArrayList<>(pathCounts.keySet());
+        final List<Path> paths = new ArrayList<>(countsCache.getPathCounts().keySet());
         paths.sort(Path::compareTo);
         for (final Path path : paths) {
             jsonWriter.startObject();
 
-            final Map<Language, Counts> langCounts = pathCounts.get(path);
+            final Map<Language, Counts> langCounts = countsCache.getPathCounts().get(path);
             final Path relativePath = rootProjectPath.relativize(path);
             jsonWriter.member("pathname", relativePath.toString())
                       .member("numLanguages", langCounts.size());

@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.xml.XMLConstants;
 
-import org.cthing.locc4j.CountUtils;
+import org.cthing.gradle.plugins.locc.CountsCache;
 import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.Language;
 import org.cthing.xmlwriter.XmlWriter;
@@ -64,8 +64,8 @@ public final class XmlReport extends AbstractLoccReport {
     }
 
     @Override
-    public void generateReport(final Map<Path, Map<Language, Counts>> pathCounts) {
-        this.totalCounts = CountUtils.total(pathCounts);
+    public void generateReport(final CountsCache countsCache) {
+        this.totalCounts = countsCache.getTotalCounts();
 
         final File destination = getOutputLocation().getAsFile().get();
         try (Writer writer = new OutputStreamWriter(Files.newOutputStream(destination.toPath()),
@@ -85,8 +85,8 @@ public final class XmlReport extends AbstractLoccReport {
             addAttribute(attrs, "projectVersion", this.task.getProject().getVersion().toString());
             xmlWriter.startElement(NAMESPACE, "locc", attrs);
 
-            writeLanguages(xmlWriter, pathCounts);
-            writeFiles(xmlWriter, pathCounts);
+            writeLanguages(xmlWriter, countsCache);
+            writeFiles(xmlWriter, countsCache);
 
             xmlWriter.endElement();
             xmlWriter.endDocument();
@@ -95,10 +95,9 @@ public final class XmlReport extends AbstractLoccReport {
         }
     }
 
-    private void writeLanguages(final XmlWriter xmlWriter, final Map<Path, Map<Language, Counts>> pathCounts)
-            throws SAXException {
+    private void writeLanguages(final XmlWriter xmlWriter, final CountsCache countsCache) throws SAXException {
         assert this.totalCounts != null;
-        final Map<Language, Counts> langCounts = CountUtils.byLanguage(pathCounts);
+        final Map<Language, Counts> langCounts = countsCache.getLanguageCounts();
 
         final AttributesImpl langsAttrs = new AttributesImpl();
         addAttribute(langsAttrs, "numLanguages", langCounts.size());
@@ -114,11 +113,10 @@ public final class XmlReport extends AbstractLoccReport {
         xmlWriter.endElement();
     }
 
-    private void writeFiles(final XmlWriter xmlWriter, final Map<Path, Map<Language, Counts>> pathCounts)
-            throws SAXException {
+    private void writeFiles(final XmlWriter xmlWriter, final CountsCache countsCache) throws SAXException {
         assert this.totalCounts != null;
-        final int numFiles = pathCounts.size();
-        final int numUnrecognized = CountUtils.unrecognized(pathCounts).size();
+        final int numFiles = countsCache.getPathCounts().size();
+        final int numUnrecognized = countsCache.getUnrecognized().size();
 
         final AttributesImpl filesAttrs = new AttributesImpl();
         addAttribute(filesAttrs, "numFiles", numFiles);
@@ -126,13 +124,13 @@ public final class XmlReport extends AbstractLoccReport {
         addCountAttributes(filesAttrs, this.totalCounts);
         xmlWriter.startElement(NAMESPACE, "files", filesAttrs);
 
-        final Map<Path, Counts> pathTotals = CountUtils.byFile(pathCounts);
+        final Map<Path, Counts> pathTotals = countsCache.getFileCounts();
 
         final Path rootProjectPath = this.task.getProject().getRootProject().getProjectDir().toPath();
-        final List<Path> paths = new ArrayList<>(pathCounts.keySet());
+        final List<Path> paths = new ArrayList<>(countsCache.getPathCounts().keySet());
         paths.sort(Path::compareTo);
         for (final Path path : paths) {
-            final Map<Language, Counts> langCounts = pathCounts.get(path);
+            final Map<Language, Counts> langCounts = countsCache.getPathCounts().get(path);
 
             final Path relativePath = rootProjectPath.relativize(path);
             final AttributesImpl fileAttrs = new AttributesImpl();
