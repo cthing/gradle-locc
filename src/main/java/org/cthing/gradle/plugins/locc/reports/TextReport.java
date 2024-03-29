@@ -106,7 +106,6 @@ public final class TextReport extends AbstractLoccReport {
         writeln(writer, "-".repeat(5));
 
         final Map<Path, Counts> pathTotals = countsCache.getFileCounts();
-        final Path rootProjectPath = this.task.getProject().getRootProject().getProjectDir().toPath();
         final List<Path> paths = new ArrayList<>(countsCache.getPathCounts().keySet());
         paths.sort(Path::compareTo);
         boolean first = true;
@@ -117,8 +116,7 @@ public final class TextReport extends AbstractLoccReport {
             first = false;
 
             final Map<Language, Counts> langCounts = countsCache.getPathCounts().get(path);
-            final Path relativePath = rootProjectPath.relativize(path);
-            writeln(writer, relativePath.toString());
+            writeln(writer, preparePathname(path).toString());
             writeCounts(writer, pathTotals.get(path));
 
             final List<Language> languages = new ArrayList<>(langCounts.keySet());

@@ -109,13 +109,11 @@ public final class YamlReport extends AbstractLoccReport {
         writeln(writer, "files:");
 
         final Map<Path, Counts> pathTotals = countsCache.getFileCounts();
-        final Path rootProjectPath = this.task.getProject().getRootProject().getProjectDir().toPath();
         final List<Path> paths = new ArrayList<>(countsCache.getPathCounts().keySet());
         paths.sort(Path::compareTo);
         for (final Path path : paths) {
             final Map<Language, Counts> langCounts = countsCache.getPathCounts().get(path);
-            final Path relativePath = rootProjectPath.relativize(path);
-            writeln(writer, "  - pathname: ", relativePath.toString());
+            writeln(writer, "  - pathname: ", preparePathname(path).toString());
             writeln(writer, "    numLanguages: ", langCounts.size());
             writeCounts(writer, INDENT_4, pathTotals.get(path));
 

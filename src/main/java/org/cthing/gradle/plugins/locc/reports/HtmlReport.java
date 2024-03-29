@@ -284,12 +284,10 @@ public final class HtmlReport extends AbstractLoccReport {
                      """);
 
         final Map<Path, Counts> pathTotals = countsCache.getFileCounts();
-        final Path rootProjectPath = this.task.getProject().getRootProject().getProjectDir().toPath();
         final List<Path> paths = new ArrayList<>(countsCache.getPathCounts().keySet());
         paths.sort(Path::compareTo);
         for (final Path path : paths) {
             final Counts counts = pathTotals.get(path);
-            final Path relativePath = rootProjectPath.relativize(path);
             final List<Language> sortedLanguages = new ArrayList<>(countsCache.getPathCounts().get(path).keySet());
             sortedLanguages.sort(Comparator.comparing(Language::getDisplayName));
 
@@ -302,8 +300,8 @@ public final class HtmlReport extends AbstractLoccReport {
                                              <td class="CountCell">%d</td>
                                              <td>%s</td>
                                          </tr>
-                         """.formatted(escape(relativePath.toString()), counts.getTotalLines(), counts.getCodeLines(),
-                                       counts.getCommentLines(), counts.getBlankLines(),
+                         """.formatted(escape(preparePathname(path).toString()), counts.getTotalLines(),
+                                       counts.getCodeLines(), counts.getCommentLines(), counts.getBlankLines(),
                                        escape(sortedLanguages.stream()
                                                              .map(Language::getDisplayName)
                                                              .collect(Collectors.joining(", ")))));

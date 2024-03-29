@@ -126,15 +126,13 @@ public final class XmlReport extends AbstractLoccReport {
 
         final Map<Path, Counts> pathTotals = countsCache.getFileCounts();
 
-        final Path rootProjectPath = this.task.getProject().getRootProject().getProjectDir().toPath();
         final List<Path> paths = new ArrayList<>(countsCache.getPathCounts().keySet());
         paths.sort(Path::compareTo);
         for (final Path path : paths) {
             final Map<Language, Counts> langCounts = countsCache.getPathCounts().get(path);
 
-            final Path relativePath = rootProjectPath.relativize(path);
             final AttributesImpl fileAttrs = new AttributesImpl();
-            addAttribute(fileAttrs, "pathname", relativePath.toString());
+            addAttribute(fileAttrs, "pathname", preparePathname(path).toString());
             addAttribute(fileAttrs, "numLanguages", langCounts.size());
             addCountAttributes(fileAttrs, pathTotals.get(path));
             xmlWriter.startElement(NAMESPACE, "file", fileAttrs);

@@ -17,6 +17,7 @@
 package org.cthing.gradle.plugins.locc.reports;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -43,17 +44,21 @@ abstract class AbstractLoccReport extends GroovyObjectSupport implements LoccRep
     private final String name;
     private final String displayName;
     private final RegularFileProperty destination;
+    private final Path rootProjectPath;
     private final Property<Boolean> required;
+    private final Property<Boolean> showRelativePaths;
 
     protected AbstractLoccReport(final Task task, final String name, final String displayName,
                                  final boolean required) {
         this.task = task;
         this.name = name;
         this.displayName = displayName;
+        this.rootProjectPath = task.getProject().getRootProject().getProjectDir().toPath();
 
         final ObjectFactory objects = task.getProject().getObjects();
         this.destination = objects.fileProperty();
         this.required = objects.property(Boolean.class).convention(required);
+        this.showRelativePaths = objects.property(Boolean.class).convention(Boolean.TRUE);
     }
 
     @Override
@@ -78,6 +83,11 @@ abstract class AbstractLoccReport extends GroovyObjectSupport implements LoccRep
     }
 
     @Override
+    public Property<Boolean> getShowRelativePaths() {
+        return this.showRelativePaths;
+    }
+
+    @Override
     public RegularFileProperty getOutputLocation() {
         return this.destination;
     }
@@ -98,6 +108,15 @@ abstract class AbstractLoccReport extends GroovyObjectSupport implements LoccRep
         this.required.set(required);
     }
 
+    /**
+     * Sets whether project relative paths should be reported.
+     *
+     * @param relative {@code true} if the project relative paths should be reported
+     */
+    void setShowRelativePaths(final boolean relative) {
+        this.showRelativePaths.set(relative);
+    }
+
     @Override
     @SuppressWarnings("rawtypes")
     public Report configure(final Closure closure) {
@@ -115,5 +134,19 @@ abstract class AbstractLoccReport extends GroovyObjectSupport implements LoccRep
      */
     protected String timestamp() {
         return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.US).format(new Date());
+    }
+
+    /**
+     * If the report is to show relative pathnames, this method transforms the specified pathname into a path
+     * relative to the root of the Gradle project. Otherwise, the specified pathname is returned unchanged.
+     *
+     * @param pathname Pathname to prepare
+     * @return Pathname relative to the Gradle project root, if desired.
+     */
+    protected Path preparePathname(final Path pathname) {
+        if (this.showRelativePaths.get()) {
+            return this.rootProjectPath.relativize(pathname);
+        }
+        return pathname;
     }
 }

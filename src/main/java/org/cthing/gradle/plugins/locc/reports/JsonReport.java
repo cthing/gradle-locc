@@ -109,15 +109,13 @@ public final class JsonReport extends AbstractLoccReport {
         jsonWriter.memberStartArray("files");
 
         final Map<Path, Counts> pathTotals = countsCache.getFileCounts();
-        final Path rootProjectPath = this.task.getProject().getRootProject().getProjectDir().toPath();
         final List<Path> paths = new ArrayList<>(countsCache.getPathCounts().keySet());
         paths.sort(Path::compareTo);
         for (final Path path : paths) {
             jsonWriter.startObject();
 
             final Map<Language, Counts> langCounts = countsCache.getPathCounts().get(path);
-            final Path relativePath = rootProjectPath.relativize(path);
-            jsonWriter.member("pathname", relativePath.toString())
+            jsonWriter.member("pathname", preparePathname(path).toString())
                       .member("numLanguages", langCounts.size());
             writeCounts(jsonWriter, pathTotals.get(path));
 

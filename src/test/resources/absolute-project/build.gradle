@@ -1,0 +1,11 @@
+plugins {
+    id 'java'
+    id 'org.cthing.locc'
+}
+
+tasks.countLines {
+    reports {
+        json.required = true
+        json.showRelativePaths = false
+    }
+}

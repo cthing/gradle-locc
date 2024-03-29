@@ -172,6 +172,31 @@ public class PluginIntegTest {
         verifyHtmlReport("/reports/complex-project");
     }
 
+    @Test
+    public void testAbsoluteProject() throws IOException {
+        final URL projectUrl = getClass().getResource("/absolute-project");
+        assertThat(projectUrl).isNotNull();
+        FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
+
+        final BuildResult result = GradleRunner.create()
+                                               .withProjectDir(this.projectDir)
+                                               .withArguments("countLines")
+                                               .withPluginClasspath()
+                                               .withDebug(true)
+                                               .build();
+        final BuildTask task = result.task(":countLines");
+        assertThat(task).isNotNull();
+        assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(SUCCESS);
+
+        final File actualReport = new File(this.projectDir, "build/reports/locc/locc.json");
+        assertThat(actualReport).isReadable();
+        showReport(actualReport);
+
+        final JsonNode rootNode = JsonLoader.fromFile(actualReport);
+        final File pathname = new File(rootNode.get("files").get(0).get("pathname").asText());
+        assertThat(pathname).isAbsolute();
+    }
+
     private void verifyXmlReport(final String reportsDir) throws IOException {
         try (InputStream expectedReport = getClass().getResourceAsStream(reportsDir + "/locc.xml");
              InputStream schema = getClass().getResourceAsStream("/org/cthing/gradle/plugins/locc/locc-1.xsd")) {
