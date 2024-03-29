@@ -13,7 +13,7 @@ blankLines: 22
 languages:
   - name: CHeader
     displayName: C Header
-    description: C programming language header file.
+    description: C programming language header file
     website: 'https://en.wikipedia.org/wiki/C_(programming_language)'
     totalLines: 13
     codeLines: 10
@@ -21,7 +21,7 @@ languages:
     blankLines: 3
   - name: Cpp
     displayName: C++
-    description: C++ programming language source file.
+    description: C++ programming language source file
     website: 'https://en.wikipedia.org/wiki/C%2B%2B'
     totalLines: 21
     codeLines: 18
@@ -29,7 +29,7 @@ languages:
     blankLines: 3
   - name: Java
     displayName: Java
-    description: Java programming language.
+    description: Java programming language
     website: 'https://en.wikipedia.org/wiki/Java_(programming_language)'
     totalLines: 76
     codeLines: 22
@@ -37,7 +37,7 @@ languages:
     blankLines: 10
   - name: Kotlin
     displayName: Kotlin
-    description: Kotlin programming language.
+    description: Kotlin programming language
     website: 'https://kotlinlang.org/'
     totalLines: 18
     codeLines: 15
@@ -45,7 +45,7 @@ languages:
     blankLines: 3
   - name: Swift
     displayName: Swift
-    description: Swift programming language.
+    description: Swift programming language
     website: 'https://www.swift.org/'
     totalLines: 20
     codeLines: 17

@@ -1,9 +1,9 @@
 <?xml version="1.0" standalone="yes"?>
 <locc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://www.cthing.com/schemas/locc-1.xsd locc-1.xsd" formatVersion="1" date="${xmlunit.ignore}" projectName="simple-project" projectVersion="unspecified" xmlns="http://www.cthing.com/locc">
     <languages numLanguages="3" totalLines="78" codeLines="40" commentLines="29" blankLines="9">
-        <language name="Css" displayName="CSS" description="Cascading Style Sheets language." website="https://www.w3.org/Style/CSS/" totalLines="7" codeLines="7" commentLines="0" blankLines="0"/>
-        <language name="Html" displayName="HTML" description="HyperText Markup Language." website="https://en.wikipedia.org/wiki/HTML" totalLines="12" codeLines="12" commentLines="0" blankLines="0"/>
-        <language name="Java" displayName="Java" description="Java programming language." website="https://en.wikipedia.org/wiki/Java_(programming_language)" totalLines="59" codeLines="21" commentLines="29" blankLines="9"/>
+        <language name="Css" displayName="CSS" description="Cascading Style Sheets language" website="https://www.w3.org/Style/CSS/" totalLines="7" codeLines="7" commentLines="0" blankLines="0"/>
+        <language name="Html" displayName="HTML" description="HyperText Markup Language" website="https://en.wikipedia.org/wiki/HTML" totalLines="12" codeLines="12" commentLines="0" blankLines="0"/>
+        <language name="Java" displayName="Java" description="Java programming language" website="https://en.wikipedia.org/wiki/Java_(programming_language)" totalLines="59" codeLines="21" commentLines="29" blankLines="9"/>
     </languages>
     <files numFiles="5" numUnrecognized="0" totalLines="78" codeLines="40" commentLines="29" blankLines="9">
         <file pathname="src/main/java/com/cthing/testproject/HelloWorld.java" numLanguages="1" totalLines="32" codeLines="11" commentLines="17" blankLines="4">

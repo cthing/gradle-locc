@@ -29,8 +29,8 @@ import org.apache.commons.io.FileUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.GradleRunner;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.xmlunit.assertj3.XmlAssert;
 import org.xmlunit.placeholder.PlaceholderDifferenceEvaluator;
 import org.xmlunit.validation.Languages;
@@ -58,16 +58,26 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 @SuppressWarnings("DataFlowIssue")
 public class PluginIntegTest {
 
+    private File projectDir;
+
+    @BeforeEach
+    public void setup() throws IOException {
+        final Path baseDir = Path.of(System.getProperty("buildDir"), "integTest");
+        Files.createDirectories(baseDir);
+        this.projectDir = Files.createTempDirectory(baseDir, null).toFile();
+    }
+
     @Test
-    public void testNoSourceSets(@TempDir final Path projectDir) throws IOException {
-        Files.writeString(projectDir.resolve("build.gradle.kts"), """
+    public void testNoSourceSets() throws IOException {
+        Files.writeString(this.projectDir.toPath().resolve("settings.gradle.kts"), "rootProject.name=\"test\"");
+        Files.writeString(this.projectDir.toPath().resolve("build.gradle.kts"), """
                 plugins {
                     id("org.cthing.locc")
                 }
                 """);
 
         final BuildResult result = GradleRunner.create()
-                                               .withProjectDir(projectDir.toFile())
+                                               .withProjectDir(this.projectDir)
                                                .withArguments("countLines")
                                                .withPluginClasspath()
                                                .build();
@@ -77,8 +87,9 @@ public class PluginIntegTest {
     }
 
     @Test
-    public void testEmptySourceSet(@TempDir final Path projectDir) throws IOException {
-        Files.writeString(projectDir.resolve("build.gradle.kts"), """
+    public void testEmptySourceSet() throws IOException {
+        Files.writeString(this.projectDir.toPath().resolve("settings.gradle.kts"), "rootProject.name=\"test\"");
+        Files.writeString(this.projectDir.toPath().resolve("build.gradle.kts"), """
                 plugins {
                     java
                     id("org.cthing.locc")
@@ -86,7 +97,7 @@ public class PluginIntegTest {
                 """);
 
         final BuildResult result = GradleRunner.create()
-                                               .withProjectDir(projectDir.toFile())
+                                               .withProjectDir(this.projectDir)
                                                .withArguments("countLines")
                                                .withPluginClasspath()
                                                .build();
@@ -114,13 +125,13 @@ public class PluginIntegTest {
     }
 
     @Test
-    public void testSimpleProject(@TempDir final File projectDir) throws IOException, ProcessingException {
+    public void testSimpleProject() throws IOException, ProcessingException {
         final URL projectUrl = getClass().getResource("/simple-project");
         assertThat(projectUrl).isNotNull();
-        FileUtils.copyDirectory(new File(projectUrl.getPath()), projectDir);
+        FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
 
         final BuildResult result = GradleRunner.create()
-                                               .withProjectDir(projectDir)
+                                               .withProjectDir(this.projectDir)
                                                .withArguments("countLines")
                                                .withPluginClasspath()
                                                .withDebug(true)
@@ -129,21 +140,22 @@ public class PluginIntegTest {
         assertThat(task).isNotNull();
         assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(SUCCESS);
 
-        verifyXmlReport(projectDir, "/reports/simple-project");
-        verifyJsonReport(projectDir, "/reports/simple-project");
-        verifyYamlReport(projectDir, "/reports/simple-project");
-        verifyTextReport(projectDir, "/reports/simple-project");
-        verifyCsvReport(projectDir, "/reports/simple-project");
+        verifyXmlReport("/reports/simple-project");
+        verifyJsonReport("/reports/simple-project");
+        verifyYamlReport("/reports/simple-project");
+        verifyTextReport("/reports/simple-project");
+        verifyCsvReport("/reports/simple-project");
+        verifyHtmlReport("/reports/simple-project");
     }
 
     @Test
-    public void testComplexProject(@TempDir final File projectDir) throws IOException, ProcessingException {
+    public void testComplexProject() throws IOException, ProcessingException {
         final URL projectUrl = getClass().getResource("/complex-project");
         assertThat(projectUrl).isNotNull();
-        FileUtils.copyDirectory(new File(projectUrl.getPath()), projectDir);
+        FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
 
         final BuildResult result = GradleRunner.create()
-                                               .withProjectDir(projectDir)
+                                               .withProjectDir(this.projectDir)
                                                .withArguments(":countLines")
                                                .withPluginClasspath()
                                                .withDebug(true)
@@ -152,17 +164,18 @@ public class PluginIntegTest {
         assertThat(task).isNotNull();
         assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(SUCCESS);
 
-        verifyXmlReport(projectDir, "/reports/complex-project");
-        verifyJsonReport(projectDir, "/reports/complex-project");
-        verifyYamlReport(projectDir, "/reports/complex-project");
-        verifyTextReport(projectDir, "/reports/complex-project");
-        verifyCsvReport(projectDir, "/reports/complex-project");
+        verifyXmlReport("/reports/complex-project");
+        verifyJsonReport("/reports/complex-project");
+        verifyYamlReport("/reports/complex-project");
+        verifyTextReport("/reports/complex-project");
+        verifyCsvReport("/reports/complex-project");
+        verifyHtmlReport("/reports/complex-project");
     }
 
-    private void verifyXmlReport(final File projectDir, final String reportsDir) throws IOException {
+    private void verifyXmlReport(final String reportsDir) throws IOException {
         try (InputStream expectedReport = getClass().getResourceAsStream(reportsDir + "/locc.xml");
              InputStream schema = getClass().getResourceAsStream("/org/cthing/gradle/plugins/locc/locc-1.xsd")) {
-            final File actualReport = new File(projectDir, "build/reports/locc/locc.xml");
+            final File actualReport = new File(this.projectDir, "build/reports/locc/locc.xml");
             assertThat(actualReport).isReadable();
             showReport(actualReport);
             XmlAssert.assertThat(actualReport).isValidAgainst(schema);
@@ -173,10 +186,10 @@ public class PluginIntegTest {
         }
     }
 
-    private void verifyJsonReport(final File projectDir, final String reportsDir)
+    private void verifyJsonReport(final String reportsDir)
             throws IOException, ProcessingException {
         final File expectedReport = new File(getClass().getResource(reportsDir + "/locc.json").getPath());
-        final File actualReport = new File(projectDir, "build/reports/locc/locc.json");
+        final File actualReport = new File(this.projectDir, "build/reports/locc/locc.json");
         assertThat(actualReport).isReadable();
         showReport(actualReport);
 
@@ -196,10 +209,10 @@ public class PluginIntegTest {
         }
     }
 
-    private void verifyYamlReport(final File projectDir, final String reportsDir)
+    private void verifyYamlReport(final String reportsDir)
             throws IOException, ProcessingException {
         final File expectedReport = new File(getClass().getResource(reportsDir + "/locc.yaml").getPath());
-        final File actualReport = new File(projectDir, "build/reports/locc/locc.yaml");
+        final File actualReport = new File(this.projectDir, "build/reports/locc/locc.yaml");
         assertThat(actualReport).isReadable();
         showReport(actualReport);
 
@@ -222,9 +235,9 @@ public class PluginIntegTest {
         }
     }
 
-    private void verifyTextReport(final File projectDir, final String reportsDir) throws IOException {
+    private void verifyTextReport(final String reportsDir) throws IOException {
         final File expectedReport = new File(getClass().getResource(reportsDir + "/locc.txt").getPath());
-        final File actualReport = new File(projectDir, "build/reports/locc/locc.txt");
+        final File actualReport = new File(this.projectDir, "build/reports/locc/locc.txt");
         assertThat(actualReport).isReadable();
         showReport(actualReport);
 
@@ -234,12 +247,23 @@ public class PluginIntegTest {
         assertThat(actualText).isEqualTo(expectedText);
     }
 
-    private void verifyCsvReport(final File projectDir, final String reportsDir) throws IOException {
+    private void verifyCsvReport(final String reportsDir) throws IOException {
         final File expectedReport = new File(getClass().getResource(reportsDir + "/locc.csv").getPath());
-        final File actualReport = new File(projectDir, "build/reports/locc/locc.csv");
+        final File actualReport = new File(this.projectDir, "build/reports/locc/locc.csv");
         showReport(actualReport);
 
         assertThat(actualReport).hasSameTextualContentAs(expectedReport);
+    }
+
+    private void verifyHtmlReport(final String reportsDir) throws IOException {
+        final File expectedReport = new File(getClass().getResource(reportsDir + "/locc.html").getPath());
+        final File actualReport = new File(this.projectDir, "build/reports/locc/locc.html");
+        showReport(actualReport);
+
+        final String expectedText = Files.readString(expectedReport.toPath());
+        final String actualText = Files.readString(actualReport.toPath())
+                                       .replaceFirst("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}-\\d{2}:\\d{2}", "ignore");
+        assertThat(actualText).isEqualTo(expectedText);
     }
 
     private JsonSchema createJsonValidator() throws IOException, ProcessingException {

@@ -166,6 +166,8 @@ tasks {
 
     withType<Test> {
         useJUnitPlatform()
+
+        systemProperty("buildDir", layout.buildDirectory.get().asFile)
     }
 
     withType<GenerateModuleMetadata> {

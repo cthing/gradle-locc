@@ -12,13 +12,13 @@ Blank lines: 9
 
 Languages
 ---------
-CSS: Cascading Style Sheets language.
+CSS: Cascading Style Sheets language
     Lines: 7 total, 7 code, 0 comment, 0 blank
 
-HTML: HyperText Markup Language.
+HTML: HyperText Markup Language
     Lines: 12 total, 12 code, 0 comment, 0 blank
 
-Java: Java programming language.
+Java: Java programming language
     Lines: 59 total, 21 code, 29 comment, 9 blank
 
 Files

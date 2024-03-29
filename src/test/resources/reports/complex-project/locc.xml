@@ -1,11 +1,11 @@
 <?xml version="1.0" standalone="yes"?>
 <locc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://www.cthing.com/schemas/locc-1.xsd locc-1.xsd" formatVersion="1" date="${xmlunit.ignore}" projectName="complex-project" projectVersion="unspecified" xmlns="http://www.cthing.com/locc">
     <languages numLanguages="5" totalLines="148" codeLines="82" commentLines="44" blankLines="22">
-        <language name="CHeader" displayName="C Header" description="C programming language header file." website="https://en.wikipedia.org/wiki/C_(programming_language)" totalLines="13" codeLines="10" commentLines="0" blankLines="3"/>
-        <language name="Cpp" displayName="C++" description="C++ programming language source file." website="https://en.wikipedia.org/wiki/C%2B%2B" totalLines="21" codeLines="18" commentLines="0" blankLines="3"/>
-        <language name="Java" displayName="Java" description="Java programming language." website="https://en.wikipedia.org/wiki/Java_(programming_language)" totalLines="76" codeLines="22" commentLines="44" blankLines="10"/>
-        <language name="Kotlin" displayName="Kotlin" description="Kotlin programming language." website="https://kotlinlang.org/" totalLines="18" codeLines="15" commentLines="0" blankLines="3"/>
-        <language name="Swift" displayName="Swift" description="Swift programming language." website="https://www.swift.org/" totalLines="20" codeLines="17" commentLines="0" blankLines="3"/>
+        <language name="CHeader" displayName="C Header" description="C programming language header file" website="https://en.wikipedia.org/wiki/C_(programming_language)" totalLines="13" codeLines="10" commentLines="0" blankLines="3"/>
+        <language name="Cpp" displayName="C++" description="C++ programming language source file" website="https://en.wikipedia.org/wiki/C%2B%2B" totalLines="21" codeLines="18" commentLines="0" blankLines="3"/>
+        <language name="Java" displayName="Java" description="Java programming language" website="https://en.wikipedia.org/wiki/Java_(programming_language)" totalLines="76" codeLines="22" commentLines="44" blankLines="10"/>
+        <language name="Kotlin" displayName="Kotlin" description="Kotlin programming language" website="https://kotlinlang.org/" totalLines="18" codeLines="15" commentLines="0" blankLines="3"/>
+        <language name="Swift" displayName="Swift" description="Swift programming language" website="https://www.swift.org/" totalLines="20" codeLines="17" commentLines="0" blankLines="3"/>
     </languages>
     <files numFiles="12" numUnrecognized="0" totalLines="148" codeLines="82" commentLines="44" blankLines="22">
         <file pathname="project1/src/main/java/com/cthing/project1/HelloWorld.java" numLanguages="1" totalLines="29" codeLines="10" commentLines="15" blankLines="4">

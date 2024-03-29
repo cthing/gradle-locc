@@ -12,19 +12,19 @@ Blank lines: 22
 
 Languages
 ---------
-C Header: C programming language header file.
+C Header: C programming language header file
     Lines: 13 total, 10 code, 0 comment, 3 blank
 
-C++: C++ programming language source file.
+C++: C++ programming language source file
     Lines: 21 total, 18 code, 0 comment, 3 blank
 
-Java: Java programming language.
+Java: Java programming language
     Lines: 76 total, 22 code, 44 comment, 10 blank
 
-Kotlin: Kotlin programming language.
+Kotlin: Kotlin programming language
     Lines: 18 total, 15 code, 0 comment, 3 blank
 
-Swift: Swift programming language.
+Swift: Swift programming language
     Lines: 20 total, 17 code, 0 comment, 3 blank
 
 Files

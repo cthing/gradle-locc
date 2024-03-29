@@ -14,7 +14,7 @@
     {
       "name": "Css",
       "displayName": "CSS",
-      "description": "Cascading Style Sheets language.",
+      "description": "Cascading Style Sheets language",
       "website": "https:\/\/www.w3.org\/Style\/CSS\/",
       "totalLines": 7,
       "codeLines": 7,
@@ -24,7 +24,7 @@
     {
       "name": "Html",
       "displayName": "HTML",
-      "description": "HyperText Markup Language.",
+      "description": "HyperText Markup Language",
       "website": "https:\/\/en.wikipedia.org\/wiki\/HTML",
       "totalLines": 12,
       "codeLines": 12,
@@ -34,7 +34,7 @@
     {
       "name": "Java",
       "displayName": "Java",
-      "description": "Java programming language.",
+      "description": "Java programming language",
       "website": "https:\/\/en.wikipedia.org\/wiki\/Java_(programming_language)",
       "totalLines": 59,
       "codeLines": 21,
