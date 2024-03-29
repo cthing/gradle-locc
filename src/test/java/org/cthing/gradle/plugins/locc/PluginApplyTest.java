@@ -45,6 +45,5 @@ public class PluginApplyTest {
         assertThat(reports.getJson().getRequired().get()).isFalse();
         assertThat(reports.getCsv().getRequired().get()).isFalse();
         assertThat(reports.getText().getRequired().get()).isFalse();
-        assertThat(reports.getDot().getRequired().get()).isFalse();
     }
 }

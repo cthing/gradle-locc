@@ -27,7 +27,6 @@ import java.util.SortedSet;
 import javax.annotation.Nullable;
 
 import org.cthing.gradle.plugins.locc.reports.CsvReport;
-import org.cthing.gradle.plugins.locc.reports.DotReport;
 import org.cthing.gradle.plugins.locc.reports.HtmlReport;
 import org.cthing.gradle.plugins.locc.reports.JsonReport;
 import org.cthing.gradle.plugins.locc.reports.LoccReport;
@@ -72,7 +71,6 @@ public class LoccReports extends GroovyObjectSupport implements ReportContainer<
         this.reports.add(new JsonReport(task, reportsDir));
         this.reports.add(new CsvReport(task, reportsDir));
         this.reports.add(new TextReport(task, reportsDir));
-        this.reports.add(new DotReport(task, reportsDir));
     }
 
     @Internal
@@ -103,11 +101,6 @@ public class LoccReports extends GroovyObjectSupport implements ReportContainer<
     @Internal
     public LoccReport getText() {
         return getByName("text");
-    }
-
-    @Internal
-    public LoccReport getDot() {
-        return getByName("dot");
     }
 
     @Override

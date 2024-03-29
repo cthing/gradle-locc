@@ -11,6 +11,5 @@ tasks.countLines {
         json.required = true
         csv.required = true
         text.required = true
-        dot.required = true
     }
 }

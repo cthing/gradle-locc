@@ -112,7 +112,6 @@ public class LoccTask extends SourceTask implements Reporting<LoccReports> {
         generateReport(this.reports.getJson(), countsCache);
         generateReport(this.reports.getCsv(), countsCache);
         generateReport(this.reports.getText(), countsCache);
-        generateReport(this.reports.getDot(), countsCache);
     }
 
     private void generateReport(final LoccReport report, final CountsCache countsCache) {
