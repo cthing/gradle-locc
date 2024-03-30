@@ -235,6 +235,32 @@ public class PluginIntegTest {
         verifyHtmlReport("/reports/replaced-project");
     }
 
+    @ParameterizedTest
+    @MethodSource("gradleVersionProvider")
+    public void testExtensionsProject(final String gradleVersion) throws IOException, ProcessingException {
+        final URL projectUrl = getClass().getResource("/extensions-project");
+        assertThat(projectUrl).isNotNull();
+        FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
+
+        final BuildResult result = GradleRunner.create()
+                                               .withProjectDir(this.projectDir)
+                                               .withArguments("countLines")
+                                               .withPluginClasspath()
+                                               .withGradleVersion(gradleVersion)
+                .withDebug(true)
+                                               .build();
+        final BuildTask task = result.task(":countLines");
+        assertThat(task).isNotNull();
+        assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(SUCCESS);
+
+        verifyXmlReport("/reports/extensions-project");
+        verifyJsonReport("/reports/extensions-project");
+        verifyYamlReport("/reports/extensions-project");
+        verifyTextReport("/reports/extensions-project");
+        verifyCsvReport("/reports/extensions-project");
+        verifyHtmlReport("/reports/extensions-project");
+    }
+
     private void verifyXmlReport(final String reportsDir) throws IOException {
         try (InputStream expectedReport = getClass().getResourceAsStream(reportsDir + "/locc.xml");
              InputStream schema = getClass().getResourceAsStream("/org/cthing/gradle/plugins/locc/locc-1.xsd")) {

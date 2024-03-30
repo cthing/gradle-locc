@@ -1,0 +1,20 @@
+import org.cthing.locc4j.Language
+
+plugins {
+    id 'java'
+    id 'org.cthing.locc'
+}
+
+tasks.countLines {
+    removeExtension("css")
+    addExtension("foo", Language.Java)
+
+    reports {
+        xml.required = true
+        html.required = true
+        yaml.required = true
+        json.required = true
+        csv.required = true
+        text.required = true
+    }
+}

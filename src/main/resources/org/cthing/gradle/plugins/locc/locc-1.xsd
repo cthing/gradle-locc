@@ -164,6 +164,14 @@
                 </documentation>
             </annotation>
         </attribute>
+        <attribute name="unrecognized" type="boolean" default="false">
+            <annotation>
+                <documentation>
+                    Indicates whether the file was in a language supported by the locc4j library.
+                    Unreconized files are not counted and counts are reported as 0.
+                </documentation>
+            </annotation>
+        </attribute>
         <attribute name="numLanguages" type="nonNegativeInteger" use="required">
             <annotation>
                 <documentation>

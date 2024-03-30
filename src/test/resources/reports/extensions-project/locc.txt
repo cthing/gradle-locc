@@ -1,0 +1,39 @@
+Line Count Report For extensions-project
+--------------------------------------------------------------------------------
+Date: ignore
+Project version: unspecified
+Number of files: 5
+Number unrecognized files: 1
+Number of languages: 2
+Total lines: 71
+Code lines: 33
+Comment lines: 29
+Blank lines: 9
+
+Languages
+---------
+HTML: HyperText Markup Language
+    Lines: 12 total, 12 code, 0 comment, 0 blank
+
+Java: Java programming language
+    Lines: 59 total, 21 code, 29 comment, 9 blank
+
+Files
+-----
+src/main/java/com/cthing/testproject/HelloWorld.foo
+    Lines: 32 total, 11 code, 17 comment, 4 blank
+    Languages: Java
+
+src/main/java/com/cthing/testproject/package-info.java
+    Lines: 10 total, 1 code, 8 comment, 1 blank
+    Languages: Java
+
+src/main/resources/sample.css (unrecognized)
+
+src/main/resources/sample.html
+    Lines: 12 total, 12 code, 0 comment, 0 blank
+    Languages: HTML
+
+src/test/java/com/cthing/testproject/HelloWorldTest.java
+    Lines: 17 total, 9 code, 4 comment, 4 blank
+    Languages: Java

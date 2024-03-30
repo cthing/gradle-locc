@@ -59,10 +59,36 @@ public class LoccTask extends SourceTask implements Reporting<LoccReports> {
         this.reports = new LoccReports(this, reportsDir);
     }
 
+    /**
+     * Obtains the flag indicating whether to count documentation string as comments or ignore them. The default
+     * is {@code true} to count documentation strings as comments.
+     *
+     * @return Flag indicating whether to count documentation strings as comments.
+     */
     @Input
     @Optional
     public Property<Boolean> getCountDocStrings() {
         return this.countDocStrings;
+    }
+
+    /**
+     * Adds the specified file extension to specified language's list of extensions. If an extension already
+     * maps to a language, it is replaced.
+     *
+     * @param fileExtension File extension to add (without the leading period). Extensions are case-insensitive.
+     * @param language Language to map to the specified extension
+     */
+    public void addExtension(final String fileExtension, final Language language) {
+        Language.addExtension(fileExtension, language);
+    }
+
+    /**
+     * Removes the specified file extension. If the extension is not present, this method does nothing.
+     *
+     * @param fileExtension File extension to remove (without the leading period). Extensions are case-insensitive.
+     */
+    public void removeExtension(final String fileExtension) {
+        Language.removeExtension(fileExtension);
     }
 
     @Nested

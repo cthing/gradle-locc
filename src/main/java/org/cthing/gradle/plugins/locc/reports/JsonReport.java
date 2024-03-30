@@ -109,31 +109,38 @@ public final class JsonReport extends AbstractLoccReport {
         jsonWriter.memberStartArray("files");
 
         final Map<Path, Counts> pathTotals = countsCache.getFileCounts();
+        final Set<Path> unrecognized = countsCache.getUnrecognized();
         final List<Path> paths = new ArrayList<>(countsCache.getPathCounts().keySet());
         paths.sort(Path::compareTo);
         for (final Path path : paths) {
+            final boolean unrecog = unrecognized.contains(path);
+
             jsonWriter.startObject();
 
             final Map<Language, Counts> langCounts = countsCache.getPathCounts().get(path);
             jsonWriter.member("pathname", preparePathname(path).toString())
                       .member("numLanguages", langCounts.size());
-            writeCounts(jsonWriter, pathTotals.get(path));
-
-            jsonWriter.memberStartArray("languages");
-
-            final List<Language> languages = new ArrayList<>(langCounts.keySet());
-            languages.sort(Comparator.comparing(Language::getDisplayName));
-            for (final Language language : languages) {
-                jsonWriter.startObject();
-
-                jsonWriter.member("name", language.name());
-                writeCounts(jsonWriter, langCounts.get(language));
-
-                jsonWriter.endObject();
+            if (unrecog) {
+                jsonWriter.member("unrecognized", true);
             }
+            writeCounts(jsonWriter, pathTotals.getOrDefault(path, Counts.ZERO));
 
-            jsonWriter.endArray();
+            if (!unrecog) {
+                jsonWriter.memberStartArray("languages");
 
+                final List<Language> languages = new ArrayList<>(langCounts.keySet());
+                languages.sort(Comparator.comparing(Language::getDisplayName));
+                for (final Language language : languages) {
+                    jsonWriter.startObject();
+
+                    jsonWriter.member("name", language.name());
+                    writeCounts(jsonWriter, langCounts.get(language));
+
+                    jsonWriter.endObject();
+                }
+
+                jsonWriter.endArray();
+            }
 
             jsonWriter.endObject();
         }

@@ -121,6 +121,11 @@
             "description" : "Pathname of the file relative to the root of the project",
             "type": "string"
           },
+          "unrecognized": {
+            "description": "Is file in a language supported by the locc4j library. Unreconized file counts are 0.",
+            "type": "boolean",
+            "default" : false
+          },
           "numLanguages": {
             "description" : "Number of languages detected in the file",
             "type": "integer",

@@ -106,6 +106,7 @@ public final class TextReport extends AbstractLoccReport {
         writeln(writer, "-".repeat(5));
 
         final Map<Path, Counts> pathTotals = countsCache.getFileCounts();
+        final Set<Path> unrecognized = countsCache.getUnrecognized();
         final List<Path> paths = new ArrayList<>(countsCache.getPathCounts().keySet());
         paths.sort(Path::compareTo);
         boolean first = true;
@@ -116,13 +117,17 @@ public final class TextReport extends AbstractLoccReport {
             first = false;
 
             final Map<Language, Counts> langCounts = countsCache.getPathCounts().get(path);
-            writeln(writer, preparePathname(path).toString());
-            writeCounts(writer, pathTotals.get(path));
+            if (unrecognized.contains(path)) {
+                writeln(writer, preparePathname(path) + " (unrecognized)");
+            } else {
+                writeln(writer, preparePathname(path).toString());
+                writeCounts(writer, pathTotals.getOrDefault(path, Counts.ZERO));
 
-            final List<Language> languages = new ArrayList<>(langCounts.keySet());
-            languages.sort(Comparator.comparing(Language::getDisplayName));
-            writer.write("    Languages: ");
-            writeln(writer, languages.stream().map(Language::getDisplayName).collect(Collectors.joining(", ")));
+                final List<Language> languages = new ArrayList<>(langCounts.keySet());
+                languages.sort(Comparator.comparing(Language::getDisplayName));
+                writer.write("    Languages: ");
+                writeln(writer, languages.stream().map(Language::getDisplayName).collect(Collectors.joining(", ")));
+            }
         }
     }
 

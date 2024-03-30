@@ -1,0 +1,114 @@
+{
+    "formatVersion": 1,
+    "date": "${json-unit.any-string}",
+    "projectName": "extensions-project",
+    "projectVersion": "unspecified",
+    "numFiles": 5,
+    "numUnrecognized": 1,
+    "numLanguages": 2,
+    "totalLines": 71,
+    "codeLines": 33,
+    "commentLines": 29,
+    "blankLines": 9,
+    "languages": [
+        {
+            "name": "Html",
+            "displayName": "HTML",
+            "description": "HyperText Markup Language",
+            "website": "https:\/\/en.wikipedia.org\/wiki\/HTML",
+            "totalLines": 12,
+            "codeLines": 12,
+            "commentLines": 0,
+            "blankLines": 0
+        },
+        {
+            "name": "Java",
+            "displayName": "Java",
+            "description": "Java programming language",
+            "website": "https:\/\/en.wikipedia.org\/wiki\/Java_(programming_language)",
+            "totalLines": 59,
+            "codeLines": 21,
+            "commentLines": 29,
+            "blankLines": 9
+        }
+    ],
+    "files": [
+        {
+            "pathname": "src\/main\/java\/com\/cthing\/testproject\/HelloWorld.foo",
+            "numLanguages": 1,
+            "totalLines": 32,
+            "codeLines": 11,
+            "commentLines": 17,
+            "blankLines": 4,
+            "languages": [
+                {
+                    "name": "Java",
+                    "totalLines": 32,
+                    "codeLines": 11,
+                    "commentLines": 17,
+                    "blankLines": 4
+                }
+            ]
+        },
+        {
+            "pathname": "src\/main\/java\/com\/cthing\/testproject\/package-info.java",
+            "numLanguages": 1,
+            "totalLines": 10,
+            "codeLines": 1,
+            "commentLines": 8,
+            "blankLines": 1,
+            "languages": [
+                {
+                    "name": "Java",
+                    "totalLines": 10,
+                    "codeLines": 1,
+                    "commentLines": 8,
+                    "blankLines": 1
+                }
+            ]
+        },
+        {
+            "pathname": "src\/main\/resources\/sample.css",
+            "numLanguages": 0,
+            "unrecognized": true,
+            "totalLines": 0,
+            "codeLines": 0,
+            "commentLines": 0,
+            "blankLines": 0
+        },
+        {
+            "pathname": "src\/main\/resources\/sample.html",
+            "numLanguages": 1,
+            "totalLines": 12,
+            "codeLines": 12,
+            "commentLines": 0,
+            "blankLines": 0,
+            "languages": [
+                {
+                    "name": "Html",
+                    "totalLines": 12,
+                    "codeLines": 12,
+                    "commentLines": 0,
+                    "blankLines": 0
+                }
+            ]
+        },
+        {
+            "pathname": "src\/test\/java\/com\/cthing\/testproject\/HelloWorldTest.java",
+            "numLanguages": 1,
+            "totalLines": 17,
+            "codeLines": 9,
+            "commentLines": 4,
+            "blankLines": 4,
+            "languages": [
+                {
+                    "name": "Java",
+                    "totalLines": 17,
+                    "codeLines": 9,
+                    "commentLines": 4,
+                    "blankLines": 4
+                }
+            ]
+        }
+    ]
+}

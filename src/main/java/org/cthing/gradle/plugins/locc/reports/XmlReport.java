@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -116,11 +117,11 @@ public final class XmlReport extends AbstractLoccReport {
     private void writeFiles(final XmlWriter xmlWriter, final CountsCache countsCache) throws SAXException {
         assert this.totalCounts != null;
         final int numFiles = countsCache.getPathCounts().size();
-        final int numUnrecognized = countsCache.getUnrecognized().size();
+        final Set<Path> unrecognized = countsCache.getUnrecognized();
 
         final AttributesImpl filesAttrs = new AttributesImpl();
         addAttribute(filesAttrs, "numFiles", numFiles);
-        addAttribute(filesAttrs, "numUnrecognized", numUnrecognized);
+        addAttribute(filesAttrs, "numUnrecognized", unrecognized.size());
         addCountAttributes(filesAttrs, this.totalCounts);
         xmlWriter.startElement(NAMESPACE, "files", filesAttrs);
 
@@ -133,8 +134,11 @@ public final class XmlReport extends AbstractLoccReport {
 
             final AttributesImpl fileAttrs = new AttributesImpl();
             addAttribute(fileAttrs, "pathname", preparePathname(path).toString());
+            if (unrecognized.contains(path)) {
+                addAttribute(fileAttrs, "unrecognized", "true");
+            }
             addAttribute(fileAttrs, "numLanguages", langCounts.size());
-            addCountAttributes(fileAttrs, pathTotals.get(path));
+            addCountAttributes(fileAttrs, pathTotals.getOrDefault(path, Counts.ZERO));
             xmlWriter.startElement(NAMESPACE, "file", fileAttrs);
 
             final List<Language> languages = new ArrayList<>(langCounts.keySet());

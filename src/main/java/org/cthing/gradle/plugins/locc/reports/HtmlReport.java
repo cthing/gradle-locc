@@ -109,6 +109,9 @@ public final class HtmlReport extends AbstractLoccReport {
                                  .TotalCell {
                                      font-weight: bold;
                                  }
+                                 .Unrecognized {
+                                     color: #DC0000;
+                                 }
                                  a:link {
                                      text-decoration: none;
                                  }
@@ -284,24 +287,31 @@ public final class HtmlReport extends AbstractLoccReport {
                      """);
 
         final Map<Path, Counts> pathTotals = countsCache.getFileCounts();
+        final Set<Path> unrecognized = countsCache.getUnrecognized();
         final List<Path> paths = new ArrayList<>(countsCache.getPathCounts().keySet());
         paths.sort(Path::compareTo);
         for (final Path path : paths) {
-            final Counts counts = pathTotals.get(path);
+            final Counts counts = pathTotals.getOrDefault(path, Counts.ZERO);
             final List<Language> sortedLanguages = new ArrayList<>(countsCache.getPathCounts().get(path).keySet());
             sortedLanguages.sort(Comparator.comparing(Language::getDisplayName));
 
+            String unrecognizedClass = "";
+            if (unrecognized.contains(path)) {
+                unrecognizedClass = " class=\"Unrecognized\"";
+            }
+
             writer.write("""
                                          <tr>
-                                             <td>%s</td>
+                                             <td%s>%s</td>
                                              <td class="CountCell">%d</td>
                                              <td class="CountCell">%d</td>
                                              <td class="CountCell">%d</td>
                                              <td class="CountCell">%d</td>
                                              <td>%s</td>
                                          </tr>
-                         """.formatted(escape(preparePathname(path).toString()), counts.getTotalLines(),
-                                       counts.getCodeLines(), counts.getCommentLines(), counts.getBlankLines(),
+                         """.formatted(unrecognizedClass, escape(preparePathname(path).toString()),
+                                       counts.getTotalLines(), counts.getCodeLines(), counts.getCommentLines(),
+                                       counts.getBlankLines(),
                                        escape(sortedLanguages.stream()
                                                              .map(Language::getDisplayName)
                                                              .collect(Collectors.joining(", ")))));
