@@ -197,6 +197,46 @@ public class PluginIntegTest {
         assertThat(pathname).isAbsolute();
     }
 
+    @Test
+    public void testAugmentedProject() throws IOException {
+        final URL projectUrl = getClass().getResource("/augmented-project");
+        assertThat(projectUrl).isNotNull();
+        FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
+
+        final BuildResult result = GradleRunner.create()
+                                               .withProjectDir(this.projectDir)
+                                               .withArguments("countLines")
+                                               .withPluginClasspath()
+                                               .withDebug(true)
+                                               .build();
+        final BuildTask task = result.task(":countLines");
+        assertThat(task).isNotNull();
+        assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(SUCCESS);
+
+        verifyXmlReport("/reports/augmented-project");
+        verifyHtmlReport("/reports/augmented-project");
+    }
+
+    @Test
+    public void testReplacedProject() throws IOException {
+        final URL projectUrl = getClass().getResource("/replaced-project");
+        assertThat(projectUrl).isNotNull();
+        FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
+
+        final BuildResult result = GradleRunner.create()
+                                               .withProjectDir(this.projectDir)
+                                               .withArguments("countLines")
+                                               .withPluginClasspath()
+                                               .withDebug(true)
+                                               .build();
+        final BuildTask task = result.task(":countLines");
+        assertThat(task).isNotNull();
+        assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(SUCCESS);
+
+        verifyXmlReport("/reports/replaced-project");
+        verifyHtmlReport("/reports/replaced-project");
+    }
+
     private void verifyXmlReport(final String reportsDir) throws IOException {
         try (InputStream expectedReport = getClass().getResourceAsStream(reportsDir + "/locc.xml");
              InputStream schema = getClass().getResourceAsStream("/org/cthing/gradle/plugins/locc/locc-1.xsd")) {

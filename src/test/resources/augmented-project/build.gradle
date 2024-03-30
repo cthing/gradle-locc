@@ -1,0 +1,11 @@
+plugins {
+    id 'java'
+    id 'org.cthing.locc'
+}
+
+tasks.countLines {
+    source(project.buildFile, new File(project.rootDir, 'dev/checkstyle.xml'))
+    reports {
+        xml.required = true
+    }
+}

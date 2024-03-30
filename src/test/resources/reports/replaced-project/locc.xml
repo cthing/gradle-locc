@@ -1,0 +1,11 @@
+<?xml version="1.0" standalone="yes"?>
+<locc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://www.cthing.com/schemas/locc-1.xsd locc-1.xsd" formatVersion="1" date="${xmlunit.ignore}" projectName="replaced-project" projectVersion="unspecified" xmlns="http://www.cthing.com/locc">
+    <languages numLanguages="1" totalLines="441" codeLines="201" commentLines="136" blankLines="104">
+        <language name="Xml" displayName="XML" description="Extensible Markup Language" website="https://www.w3.org/XML/" totalLines="441" codeLines="201" commentLines="136" blankLines="104"/>
+    </languages>
+    <files numFiles="1" numUnrecognized="0" totalLines="441" codeLines="201" commentLines="136" blankLines="104">
+        <file pathname="dev/checkstyle.xml" numLanguages="1" totalLines="441" codeLines="201" commentLines="136" blankLines="104">
+            <language name="Xml" totalLines="441" codeLines="201" commentLines="136" blankLines="104"/>
+        </file>
+    </files>
+</locc>
