@@ -59,6 +59,7 @@ files:
     codeLines: 0
     commentLines: 0
     blankLines: 0
+    languages: []
   - pathname: 'src/main/resources/sample.html'
     numLanguages: 1
     totalLines: 12

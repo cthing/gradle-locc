@@ -198,7 +198,8 @@
           "totalLines",
           "codeLines",
           "commentLines",
-          "blankLines"
+          "blankLines",
+          "languages"
         ]
       }
     }

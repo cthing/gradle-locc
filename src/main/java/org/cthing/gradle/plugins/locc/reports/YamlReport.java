@@ -113,20 +113,20 @@ public final class YamlReport extends AbstractLoccReport {
         final List<Path> paths = new ArrayList<>(countsCache.getPathCounts().keySet());
         paths.sort(Path::compareTo);
         for (final Path path : paths) {
-            final boolean unrecog = unrecognized.contains(path);
-
             final Map<Language, Counts> langCounts = countsCache.getPathCounts().get(path);
             writeln(writer, "  - pathname: ", preparePathname(path).toString());
             writeln(writer, "    numLanguages: ", langCounts.size());
-            if (unrecog) {
+            if (unrecognized.contains(path)) {
                 writeln(writer, "    unrecognized: ", "true");
             }
             writeCounts(writer, INDENT_4, pathTotals.getOrDefault(path, Counts.ZERO));
 
-            if (!unrecog) {
+            final List<Language> languages = new ArrayList<>(langCounts.keySet());
+            if (languages.isEmpty()) {
+                writeln(writer, "    languages: []");
+            } else {
                 writeln(writer, "    languages:");
 
-                final List<Language> languages = new ArrayList<>(langCounts.keySet());
                 languages.sort(Comparator.comparing(Language::getDisplayName));
                 for (final Language language : languages) {
                     writeln(writer, "      - name: ", language.name());

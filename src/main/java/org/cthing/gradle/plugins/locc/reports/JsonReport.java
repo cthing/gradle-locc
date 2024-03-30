@@ -113,34 +113,30 @@ public final class JsonReport extends AbstractLoccReport {
         final List<Path> paths = new ArrayList<>(countsCache.getPathCounts().keySet());
         paths.sort(Path::compareTo);
         for (final Path path : paths) {
-            final boolean unrecog = unrecognized.contains(path);
-
             jsonWriter.startObject();
 
             final Map<Language, Counts> langCounts = countsCache.getPathCounts().get(path);
             jsonWriter.member("pathname", preparePathname(path).toString())
                       .member("numLanguages", langCounts.size());
-            if (unrecog) {
+            if (unrecognized.contains(path)) {
                 jsonWriter.member("unrecognized", true);
             }
             writeCounts(jsonWriter, pathTotals.getOrDefault(path, Counts.ZERO));
 
-            if (!unrecog) {
-                jsonWriter.memberStartArray("languages");
+            jsonWriter.memberStartArray("languages");
 
-                final List<Language> languages = new ArrayList<>(langCounts.keySet());
-                languages.sort(Comparator.comparing(Language::getDisplayName));
-                for (final Language language : languages) {
-                    jsonWriter.startObject();
+            final List<Language> languages = new ArrayList<>(langCounts.keySet());
+            languages.sort(Comparator.comparing(Language::getDisplayName));
+            for (final Language language : languages) {
+                jsonWriter.startObject();
 
-                    jsonWriter.member("name", language.name());
-                    writeCounts(jsonWriter, langCounts.get(language));
+                jsonWriter.member("name", language.name());
+                writeCounts(jsonWriter, langCounts.get(language));
 
-                    jsonWriter.endObject();
-                }
-
-                jsonWriter.endArray();
+                jsonWriter.endObject();
             }
+
+            jsonWriter.endArray();
 
             jsonWriter.endObject();
         }
