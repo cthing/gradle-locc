@@ -22,12 +22,14 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.GradleRunner;
+import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -57,6 +59,9 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 @SuppressWarnings("DataFlowIssue")
 public class PluginIntegTest {
 
+    private static final Pattern TIMESTAMPT_REGEX =
+            Pattern.compile("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}-\\d{2}:\\d{2}");
+
     private File projectDir;
 
     public static Stream<Arguments> gradleVersionProvider() {
@@ -84,15 +89,8 @@ public class PluginIntegTest {
                 }
                 """);
 
-        final BuildResult result = GradleRunner.create()
-                                               .withProjectDir(this.projectDir)
-                                               .withArguments("countLines")
-                                               .withPluginClasspath()
-                                               .withGradleVersion(gradleVersion)
-                                               .build();
-        final BuildTask task = result.task(":countLines");
-        assertThat(task).isNotNull();
-        assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(NO_SOURCE);
+        final BuildResult result = createGradleRunner(gradleVersion).build();
+        verifyBuild(result, NO_SOURCE);
     }
 
     @ParameterizedTest
@@ -106,83 +104,34 @@ public class PluginIntegTest {
                 }
                 """);
 
-        final BuildResult result = GradleRunner.create()
-                                               .withProjectDir(this.projectDir)
-                                               .withArguments("countLines")
-                                               .withPluginClasspath()
-                                               .withGradleVersion(gradleVersion)
-                                               .build();
-        final BuildTask task = result.task(":countLines");
-        assertThat(task).isNotNull();
-        assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(NO_SOURCE);
+        final BuildResult result = createGradleRunner(gradleVersion).build();
+        verifyBuild(result, NO_SOURCE);
     }
 
     @ParameterizedTest
     @MethodSource("gradleVersionProvider")
     public void testSimpleProject(final String gradleVersion) throws IOException, ProcessingException {
-        final URL projectUrl = getClass().getResource("/simple-project");
-        assertThat(projectUrl).isNotNull();
-        FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
-
-        final BuildResult result = GradleRunner.create()
-                                               .withProjectDir(this.projectDir)
-                                               .withArguments("countLines")
-                                               .withPluginClasspath()
-                                               .withGradleVersion(gradleVersion)
-                                               .build();
-        final BuildTask task = result.task(":countLines");
-        assertThat(task).isNotNull();
-        assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(SUCCESS);
-
-        verifyXmlReport("/reports/simple-project");
-        verifyJsonReport("/reports/simple-project");
-        verifyYamlReport("/reports/simple-project");
-        verifyTextReport("/reports/simple-project");
-        verifyCsvReport("/reports/simple-project");
-        verifyHtmlReport("/reports/simple-project");
+        copyProject("simple-project");
+        final BuildResult result = createGradleRunner(gradleVersion).build();
+        verifyBuild(result, SUCCESS);
+        verifyAllReports("/reports/simple-project");
     }
 
     @ParameterizedTest
     @MethodSource("gradleVersionProvider")
     public void testComplexProject(final String gradleVersion) throws IOException, ProcessingException {
-        final URL projectUrl = getClass().getResource("/complex-project");
-        assertThat(projectUrl).isNotNull();
-        FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
-
-        final BuildResult result = GradleRunner.create()
-                                               .withProjectDir(this.projectDir)
-                                               .withArguments(":countLines")
-                                               .withPluginClasspath()
-                                               .withGradleVersion(gradleVersion)
-                                               .build();
-        final BuildTask task = result.task(":countLines");
-        assertThat(task).isNotNull();
-        assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(SUCCESS);
-
-        verifyXmlReport("/reports/complex-project");
-        verifyJsonReport("/reports/complex-project");
-        verifyYamlReport("/reports/complex-project");
-        verifyTextReport("/reports/complex-project");
-        verifyCsvReport("/reports/complex-project");
-        verifyHtmlReport("/reports/complex-project");
+        copyProject("complex-project");
+        final BuildResult result = createGradleRunner(gradleVersion).build();
+        verifyBuild(result, SUCCESS);
+        verifyAllReports("/reports/complex-project");
     }
 
     @ParameterizedTest
     @MethodSource("gradleVersionProvider")
     public void testAbsoluteProject(final String gradleVersion) throws IOException {
-        final URL projectUrl = getClass().getResource("/absolute-project");
-        assertThat(projectUrl).isNotNull();
-        FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
-
-        final BuildResult result = GradleRunner.create()
-                                               .withProjectDir(this.projectDir)
-                                               .withArguments("countLines")
-                                               .withPluginClasspath()
-                                               .withGradleVersion(gradleVersion)
-                                               .build();
-        final BuildTask task = result.task(":countLines");
-        assertThat(task).isNotNull();
-        assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(SUCCESS);
+        copyProject("absolute-project");
+        final BuildResult result = createGradleRunner(gradleVersion).build();
+        verifyBuild(result, SUCCESS);
 
         final File actualReport = new File(this.projectDir, "build/reports/locc/locc.json");
         assertThat(actualReport).isReadable();
@@ -196,20 +145,9 @@ public class PluginIntegTest {
     @ParameterizedTest
     @MethodSource("gradleVersionProvider")
     public void testAugmentedProject(final String gradleVersion) throws IOException {
-        final URL projectUrl = getClass().getResource("/augmented-project");
-        assertThat(projectUrl).isNotNull();
-        FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
-
-        final BuildResult result = GradleRunner.create()
-                                               .withProjectDir(this.projectDir)
-                                               .withArguments("countLines")
-                                               .withPluginClasspath()
-                                               .withGradleVersion(gradleVersion)
-                                               .build();
-        final BuildTask task = result.task(":countLines");
-        assertThat(task).isNotNull();
-        assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(SUCCESS);
-
+        copyProject("augmented-project");
+        final BuildResult result = createGradleRunner(gradleVersion).build();
+        verifyBuild(result, SUCCESS);
         verifyXmlReport("/reports/augmented-project");
         verifyHtmlReport("/reports/augmented-project");
     }
@@ -217,20 +155,9 @@ public class PluginIntegTest {
     @ParameterizedTest
     @MethodSource("gradleVersionProvider")
     public void testReplacedProject(final String gradleVersion) throws IOException {
-        final URL projectUrl = getClass().getResource("/replaced-project");
-        assertThat(projectUrl).isNotNull();
-        FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
-
-        final BuildResult result = GradleRunner.create()
-                                               .withProjectDir(this.projectDir)
-                                               .withArguments("countLines")
-                                               .withPluginClasspath()
-                                               .withGradleVersion(gradleVersion)
-                                               .build();
-        final BuildTask task = result.task(":countLines");
-        assertThat(task).isNotNull();
-        assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(SUCCESS);
-
+        copyProject("replaced-project");
+        final BuildResult result = createGradleRunner(gradleVersion).build();
+        verifyBuild(result, SUCCESS);
         verifyXmlReport("/reports/replaced-project");
         verifyHtmlReport("/reports/replaced-project");
     }
@@ -238,27 +165,39 @@ public class PluginIntegTest {
     @ParameterizedTest
     @MethodSource("gradleVersionProvider")
     public void testExtensionsProject(final String gradleVersion) throws IOException, ProcessingException {
-        final URL projectUrl = getClass().getResource("/extensions-project");
+        copyProject("extensions-project");
+        final BuildResult result = createGradleRunner(gradleVersion).build();
+        verifyBuild(result, SUCCESS);
+        verifyAllReports("/reports/extensions-project");
+    }
+
+    private void copyProject(final String projectName) throws IOException {
+        final URL projectUrl = getClass().getResource("/projects/" + projectName);
         assertThat(projectUrl).isNotNull();
         FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
+    }
 
-        final BuildResult result = GradleRunner.create()
-                                               .withProjectDir(this.projectDir)
-                                               .withArguments("countLines")
-                                               .withPluginClasspath()
-                                               .withGradleVersion(gradleVersion)
-                .withDebug(true)
-                                               .build();
+    private GradleRunner createGradleRunner(final String gradleVersion) {
+        return GradleRunner.create()
+                           .withProjectDir(this.projectDir)
+                           .withArguments("countLines")
+                           .withPluginClasspath()
+                           .withGradleVersion(gradleVersion);
+    }
+
+    private void verifyBuild(final BuildResult result, final TaskOutcome outcome) {
         final BuildTask task = result.task(":countLines");
         assertThat(task).isNotNull();
-        assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(SUCCESS);
+        assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(outcome);
+    }
 
-        verifyXmlReport("/reports/extensions-project");
-        verifyJsonReport("/reports/extensions-project");
-        verifyYamlReport("/reports/extensions-project");
-        verifyTextReport("/reports/extensions-project");
-        verifyCsvReport("/reports/extensions-project");
-        verifyHtmlReport("/reports/extensions-project");
+    private void verifyAllReports(final String reportsDir) throws IOException, ProcessingException {
+        verifyXmlReport(reportsDir);
+        verifyJsonReport(reportsDir);
+        verifyYamlReport(reportsDir);
+        verifyTextReport(reportsDir);
+        verifyCsvReport(reportsDir);
+        verifyHtmlReport(reportsDir);
     }
 
     private void verifyXmlReport(final String reportsDir) throws IOException {
@@ -307,8 +246,7 @@ public class PluginIntegTest {
 
         final String expectedYaml = Files.readString(expectedReport.toPath());
         final String actualYaml = Files.readString(actualReport.toPath());
-        final String noTimestampYaml =
-                actualYaml.replaceFirst("'\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}-\\d{2}:\\d{2}'", "'ignore'");
+        final String noTimestampYaml = TIMESTAMPT_REGEX.matcher(actualYaml).replaceFirst("ignore");
         assertThat(noTimestampYaml).isEqualTo(expectedYaml);
 
         final JsonSchema validator = createJsonValidator();
@@ -331,8 +269,8 @@ public class PluginIntegTest {
         showReport(actualReport);
 
         final String expectedText = Files.readString(expectedReport.toPath());
-        final String actualText = Files.readString(actualReport.toPath())
-                                       .replaceFirst("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}-\\d{2}:\\d{2}", "ignore");
+        final String actualText = TIMESTAMPT_REGEX.matcher(Files.readString(actualReport.toPath()))
+                                                  .replaceFirst("ignore");
         assertThat(actualText).isEqualTo(expectedText);
     }
 
@@ -350,8 +288,8 @@ public class PluginIntegTest {
         showReport(actualReport);
 
         final String expectedText = Files.readString(expectedReport.toPath());
-        final String actualText = Files.readString(actualReport.toPath())
-                                       .replaceFirst("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}-\\d{2}:\\d{2}", "ignore");
+        final String actualText = TIMESTAMPT_REGEX.matcher(Files.readString(actualReport.toPath()))
+                                                  .replaceFirst("ignore");
         assertThat(actualText).isEqualTo(expectedText);
     }
 
