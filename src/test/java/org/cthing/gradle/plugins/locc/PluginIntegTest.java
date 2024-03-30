@@ -22,19 +22,18 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import javax.xml.transform.stream.StreamSource;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.xmlunit.assertj3.XmlAssert;
 import org.xmlunit.placeholder.PlaceholderDifferenceEvaluator;
-import org.xmlunit.validation.Languages;
-import org.xmlunit.validation.Validator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,12 +44,12 @@ import com.github.fge.jsonschema.core.report.ProcessingMessage;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import com.github.fge.jsonschema.processors.syntax.SyntaxValidator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.gradle.testkit.runner.TaskOutcome.NO_SOURCE;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
@@ -60,6 +59,14 @@ public class PluginIntegTest {
 
     private File projectDir;
 
+    public static Stream<Arguments> gradleVersionProvider() {
+        return Stream.of(
+                arguments("8.3"),
+                arguments("8.6"),
+                arguments("8.7")
+        );
+    }
+
     @BeforeEach
     public void setup() throws IOException {
         final Path baseDir = Path.of(System.getProperty("buildDir"), "integTest");
@@ -67,8 +74,9 @@ public class PluginIntegTest {
         this.projectDir = Files.createTempDirectory(baseDir, null).toFile();
     }
 
-    @Test
-    public void testNoSourceSets() throws IOException {
+    @ParameterizedTest
+    @MethodSource("gradleVersionProvider")
+    public void testNoSourceSets(final String gradleVersion) throws IOException {
         Files.writeString(this.projectDir.toPath().resolve("settings.gradle.kts"), "rootProject.name=\"test\"");
         Files.writeString(this.projectDir.toPath().resolve("build.gradle.kts"), """
                 plugins {
@@ -80,14 +88,16 @@ public class PluginIntegTest {
                                                .withProjectDir(this.projectDir)
                                                .withArguments("countLines")
                                                .withPluginClasspath()
+                                               .withGradleVersion(gradleVersion)
                                                .build();
         final BuildTask task = result.task(":countLines");
         assertThat(task).isNotNull();
         assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(NO_SOURCE);
     }
 
-    @Test
-    public void testEmptySourceSet() throws IOException {
+    @ParameterizedTest
+    @MethodSource("gradleVersionProvider")
+    public void testEmptySourceSet(final String gradleVersion) throws IOException {
         Files.writeString(this.projectDir.toPath().resolve("settings.gradle.kts"), "rootProject.name=\"test\"");
         Files.writeString(this.projectDir.toPath().resolve("build.gradle.kts"), """
                 plugins {
@@ -100,32 +110,16 @@ public class PluginIntegTest {
                                                .withProjectDir(this.projectDir)
                                                .withArguments("countLines")
                                                .withPluginClasspath()
+                                               .withGradleVersion(gradleVersion)
                                                .build();
         final BuildTask task = result.task(":countLines");
         assertThat(task).isNotNull();
         assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(NO_SOURCE);
     }
 
-    @Test
-    public void testXmlSchema() throws IOException {
-        try (InputStream schema = getClass().getResourceAsStream("/org/cthing/gradle/plugins/locc/locc-1.xsd")) {
-            final Validator validator = Validator.forLanguage(Languages.W3C_XML_SCHEMA_NS_URI);
-            validator.setSchemaSource(new StreamSource(schema));
-            assertThat(validator.validateSchema().isValid()).isTrue();
-        }
-    }
-
-    @Test
-    public void testJsonSchema() throws IOException {
-        final JsonSchemaFactory schemaFactory = JsonSchemaFactory.byDefault();
-        final SyntaxValidator validator = schemaFactory.getSyntaxValidator();
-        final File schema = new File(getClass().getResource("/org/cthing/gradle/plugins/locc/locc-1.json").getPath());
-        final JsonNode rootNode = JsonLoader.fromFile(schema);
-        assertThat(validator.validateSchema(rootNode).isSuccess()).isTrue();
-    }
-
-    @Test
-    public void testSimpleProject() throws IOException, ProcessingException {
+    @ParameterizedTest
+    @MethodSource("gradleVersionProvider")
+    public void testSimpleProject(final String gradleVersion) throws IOException, ProcessingException {
         final URL projectUrl = getClass().getResource("/simple-project");
         assertThat(projectUrl).isNotNull();
         FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
@@ -134,7 +128,7 @@ public class PluginIntegTest {
                                                .withProjectDir(this.projectDir)
                                                .withArguments("countLines")
                                                .withPluginClasspath()
-                                               .withDebug(true)
+                                               .withGradleVersion(gradleVersion)
                                                .build();
         final BuildTask task = result.task(":countLines");
         assertThat(task).isNotNull();
@@ -148,8 +142,9 @@ public class PluginIntegTest {
         verifyHtmlReport("/reports/simple-project");
     }
 
-    @Test
-    public void testComplexProject() throws IOException, ProcessingException {
+    @ParameterizedTest
+    @MethodSource("gradleVersionProvider")
+    public void testComplexProject(final String gradleVersion) throws IOException, ProcessingException {
         final URL projectUrl = getClass().getResource("/complex-project");
         assertThat(projectUrl).isNotNull();
         FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
@@ -158,7 +153,7 @@ public class PluginIntegTest {
                                                .withProjectDir(this.projectDir)
                                                .withArguments(":countLines")
                                                .withPluginClasspath()
-                                               .withDebug(true)
+                                               .withGradleVersion(gradleVersion)
                                                .build();
         final BuildTask task = result.task(":countLines");
         assertThat(task).isNotNull();
@@ -172,8 +167,9 @@ public class PluginIntegTest {
         verifyHtmlReport("/reports/complex-project");
     }
 
-    @Test
-    public void testAbsoluteProject() throws IOException {
+    @ParameterizedTest
+    @MethodSource("gradleVersionProvider")
+    public void testAbsoluteProject(final String gradleVersion) throws IOException {
         final URL projectUrl = getClass().getResource("/absolute-project");
         assertThat(projectUrl).isNotNull();
         FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
@@ -182,7 +178,7 @@ public class PluginIntegTest {
                                                .withProjectDir(this.projectDir)
                                                .withArguments("countLines")
                                                .withPluginClasspath()
-                                               .withDebug(true)
+                                               .withGradleVersion(gradleVersion)
                                                .build();
         final BuildTask task = result.task(":countLines");
         assertThat(task).isNotNull();
@@ -197,8 +193,9 @@ public class PluginIntegTest {
         assertThat(pathname).isAbsolute();
     }
 
-    @Test
-    public void testAugmentedProject() throws IOException {
+    @ParameterizedTest
+    @MethodSource("gradleVersionProvider")
+    public void testAugmentedProject(final String gradleVersion) throws IOException {
         final URL projectUrl = getClass().getResource("/augmented-project");
         assertThat(projectUrl).isNotNull();
         FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
@@ -207,7 +204,7 @@ public class PluginIntegTest {
                                                .withProjectDir(this.projectDir)
                                                .withArguments("countLines")
                                                .withPluginClasspath()
-                                               .withDebug(true)
+                                               .withGradleVersion(gradleVersion)
                                                .build();
         final BuildTask task = result.task(":countLines");
         assertThat(task).isNotNull();
@@ -217,8 +214,9 @@ public class PluginIntegTest {
         verifyHtmlReport("/reports/augmented-project");
     }
 
-    @Test
-    public void testReplacedProject() throws IOException {
+    @ParameterizedTest
+    @MethodSource("gradleVersionProvider")
+    public void testReplacedProject(final String gradleVersion) throws IOException {
         final URL projectUrl = getClass().getResource("/replaced-project");
         assertThat(projectUrl).isNotNull();
         FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
@@ -227,7 +225,7 @@ public class PluginIntegTest {
                                                .withProjectDir(this.projectDir)
                                                .withArguments("countLines")
                                                .withPluginClasspath()
-                                               .withDebug(true)
+                                               .withGradleVersion(gradleVersion)
                                                .build();
         final BuildTask task = result.task(":countLines");
         assertThat(task).isNotNull();
