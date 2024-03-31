@@ -43,7 +43,7 @@ import org.gradle.nativeplatform.test.xctest.SwiftXCTestSuite;
 public class LoccPlugin implements Plugin<Project> {
 
     public static final String EXTENSION_NAME = "locc";
-    public static final String COUNT_LINES_TASK_NAME = "countLines";
+    public static final String TASK_NAME = "countCodeLines";
 
     @Override
     public void apply(final Project project) {
@@ -51,7 +51,7 @@ public class LoccPlugin implements Plugin<Project> {
 
         project.getExtensions().create(EXTENSION_NAME, LoccExtension.class, project);
 
-        project.getTasks().register(COUNT_LINES_TASK_NAME, LoccTask.class, loccTask -> {
+        project.getTasks().register(TASK_NAME, LoccTask.class, loccTask -> {
             final Callable<Set<File>> filesProvider = () -> {
                 final Set<File> files = new HashSet<>();
 

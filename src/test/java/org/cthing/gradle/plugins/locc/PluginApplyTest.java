@@ -48,7 +48,7 @@ public class PluginApplyTest {
 
         assertThat(project.getExtensions().findByName(LoccPlugin.EXTENSION_NAME)).isInstanceOf(LoccExtension.class);
 
-        final Task task = project.getTasks().findByName(LoccPlugin.COUNT_LINES_TASK_NAME);
+        final Task task = project.getTasks().findByName(LoccPlugin.TASK_NAME);
         assertThat(task).isNotNull().isInstanceOf(LoccTask.class);
         final LoccReports reports = ((LoccTask)task).getReports();
         assertThat(reports.getXml().getRequired().get()).isTrue();

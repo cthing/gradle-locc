@@ -3,7 +3,7 @@ plugins {
     id 'org.cthing.locc'
 }
 
-tasks.countLines {
+tasks.countCodeLines {
     source = new File(project.rootDir, 'dev/checkstyle.xml')
     reports {
         xml.required = true

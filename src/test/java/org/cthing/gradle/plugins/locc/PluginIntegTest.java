@@ -180,13 +180,13 @@ public class PluginIntegTest {
     private GradleRunner createGradleRunner(final String gradleVersion) {
         return GradleRunner.create()
                            .withProjectDir(this.projectDir)
-                           .withArguments("countLines")
+                           .withArguments("countCodeLines")
                            .withPluginClasspath()
                            .withGradleVersion(gradleVersion);
     }
 
     private void verifyBuild(final BuildResult result, final TaskOutcome outcome) {
-        final BuildTask task = result.task(":countLines");
+        final BuildTask task = result.task(":countCodeLines");
         assertThat(task).isNotNull();
         assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(outcome);
     }

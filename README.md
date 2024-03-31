@@ -54,7 +54,7 @@ plugins {
 }
 ```
 
-The plugin creates a task called `countLines` which counts all source code in all projects. Specifically, the
+The plugin creates a task called `countCodeLines` which counts all source code in all projects. Specifically, the
 files in the following Gradle constructs are counted:
 
 * All [SourceSets](https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/SourceSetContainer.html),
@@ -70,13 +70,13 @@ files in the following Gradle constructs are counted:
 
 ### Counting Additional or Different Files
 
-The `countLines` task is an instance of an `LoccTask` which is derived from
+The `countCodeLines` task is an instance of an `LoccTask` which is derived from
 [SourceTask](https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/SourceTask.html). Therefore, all
 properties and methods of that task can be used to add or replace files to be counted. For example, to count
-additional files, configure the `countLines` task:
+additional files, configure the `countCodeLines` task:
 
 ```groovy
-tasks.countLines {
+tasks.countCodeLines {
     source(project.buildFile, new File(project.rootDir, 'dev/checkstyle.xml'))
 }
 ```
@@ -84,7 +84,7 @@ tasks.countLines {
 The following example, completely replaces the default set of files counted with those specified:
 
 ```groovy
-tasks.countLines {
+tasks.countCodeLines {
     source = new File(project.rootDir, 'dev/checkstyle.xml')
 }
 ```
@@ -97,7 +97,7 @@ added or removed from the mapping. The following example removes the association
 any language and associates the `foo` file extension with the Java programming language:
 
 ```groovy
-tasks.countLines {
+tasks.countCodeLines {
     removeExtension("css")
     addExtension("foo", Language.Java)
 }
@@ -125,11 +125,12 @@ The plugin is capable of generating a line count report in the following formats
 * XML
 * YAML
 
-By default, the plugin will generate a line count report in the HTML and XML formats. To configure which file formats
-are generated, configure the task reports. For example, to output all formats:
+The report for each format is generated as `build/reports/locc/locc.{csv, html, json, txt, xml, yaml}`. By default,
+the plugin will generate a report in the HTML and XML formats. To configure which file formats are generated,
+configure the task reports. For example, to output all formats:
 
 ```groovy
-tasks.countLines {
+tasks.countCodeLines {
     reports {
         xml.required = true
         html.required = true
@@ -144,7 +145,7 @@ tasks.countLines {
 To output only a JSON format line count report:
 
 ```groovy
-tasks.countLines {
+tasks.countCodeLines {
     reports {
         xml.required = false
         html.required = false

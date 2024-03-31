@@ -3,7 +3,7 @@ plugins {
     id 'org.cthing.locc'
 }
 
-tasks.countLines {
+tasks.countCodeLines {
     reports {
         json.required = true
         json.showRelativePaths = false

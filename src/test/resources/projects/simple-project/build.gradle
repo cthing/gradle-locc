@@ -3,7 +3,7 @@ plugins {
     id 'org.cthing.locc'
 }
 
-tasks.countLines {
+tasks.countCodeLines {
     reports {
         xml.required = true
         html.required = true
