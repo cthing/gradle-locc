@@ -1,0 +1,22 @@
+<?xml version="1.0" standalone="yes"?>
+<locc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://www.cthing.com/schemas/locc-1.xsd locc-1.xsd" formatVersion="1" date="${xmlunit.ignore}" projectName="simple-project" projectVersion="unspecified" xmlns="http://www.cthing.com/locc">
+    <languages numLanguages="3" totalLines="61" codeLines="31" commentLines="25" blankLines="5">
+        <language name="Css" displayName="CSS" description="Cascading Style Sheets language" website="https://www.w3.org/Style/CSS/" totalLines="7" codeLines="7" commentLines="0" blankLines="0"/>
+        <language name="Html" displayName="HTML" description="HyperText Markup Language" website="https://en.wikipedia.org/wiki/HTML" totalLines="12" codeLines="12" commentLines="0" blankLines="0"/>
+        <language name="Java" displayName="Java" description="Java programming language" website="https://en.wikipedia.org/wiki/Java_(programming_language)" totalLines="42" codeLines="12" commentLines="25" blankLines="5"/>
+    </languages>
+    <files numFiles="4" numUnrecognized="0" totalLines="61" codeLines="31" commentLines="25" blankLines="5">
+        <file pathname="src/main/java/com/cthing/testproject/HelloWorld.java" numLanguages="1" totalLines="32" codeLines="11" commentLines="17" blankLines="4">
+            <language name="Java" totalLines="32" codeLines="11" commentLines="17" blankLines="4"/>
+        </file>
+        <file pathname="src/main/java/com/cthing/testproject/package-info.java" numLanguages="1" totalLines="10" codeLines="1" commentLines="8" blankLines="1">
+            <language name="Java" totalLines="10" codeLines="1" commentLines="8" blankLines="1"/>
+        </file>
+        <file pathname="src/main/resources/sample.css" numLanguages="1" totalLines="7" codeLines="7" commentLines="0" blankLines="0">
+            <language name="Css" totalLines="7" codeLines="7" commentLines="0" blankLines="0"/>
+        </file>
+        <file pathname="src/main/resources/sample.html" numLanguages="1" totalLines="12" codeLines="12" commentLines="0" blankLines="0">
+            <language name="Html" totalLines="12" codeLines="12" commentLines="0" blankLines="0"/>
+        </file>
+    </files>
+</locc>

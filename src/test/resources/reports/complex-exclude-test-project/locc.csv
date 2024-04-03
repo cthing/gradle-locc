@@ -1,0 +1,7 @@
+ID,Name,Description,Total Lines,Code Lines,Comment Lines,Blank Lines
+ALL,All,All languages,114,54,44,16
+CHeader,C Header,C programming language header file,13,10,0,3
+Cpp,C++,C++ programming language source file,13,11,0,2
+Java,Java,Java programming language,76,22,44,10
+Kotlin,Kotlin,Kotlin programming language,7,6,0,1
+Swift,Swift,Swift programming language,5,5,0,0

@@ -1,0 +1,203 @@
+{
+    "formatVersion": 1,
+    "date": "${json-unit.any-string}",
+    "projectName": "complex-project",
+    "projectVersion": "unspecified",
+    "numFiles": 8,
+    "numUnrecognized": 0,
+    "numLanguages": 5,
+    "totalLines": 114,
+    "codeLines": 54,
+    "commentLines": 44,
+    "blankLines": 16,
+    "languages": [
+        {
+            "name": "CHeader",
+            "displayName": "C Header",
+            "description": "C programming language header file",
+            "website": "https:\/\/en.wikipedia.org\/wiki\/C_(programming_language)",
+            "totalLines": 13,
+            "codeLines": 10,
+            "commentLines": 0,
+            "blankLines": 3
+        },
+        {
+            "name": "Cpp",
+            "displayName": "C++",
+            "description": "C++ programming language source file",
+            "website": "https:\/\/en.wikipedia.org\/wiki\/C%2B%2B",
+            "totalLines": 13,
+            "codeLines": 11,
+            "commentLines": 0,
+            "blankLines": 2
+        },
+        {
+            "name": "Java",
+            "displayName": "Java",
+            "description": "Java programming language",
+            "website": "https:\/\/en.wikipedia.org\/wiki\/Java_(programming_language)",
+            "totalLines": 76,
+            "codeLines": 22,
+            "commentLines": 44,
+            "blankLines": 10
+        },
+        {
+            "name": "Kotlin",
+            "displayName": "Kotlin",
+            "description": "Kotlin programming language",
+            "website": "https:\/\/kotlinlang.org\/",
+            "totalLines": 7,
+            "codeLines": 6,
+            "commentLines": 0,
+            "blankLines": 1
+        },
+        {
+            "name": "Swift",
+            "displayName": "Swift",
+            "description": "Swift programming language",
+            "website": "https:\/\/www.swift.org\/",
+            "totalLines": 5,
+            "codeLines": 5,
+            "commentLines": 0,
+            "blankLines": 0
+        }
+    ],
+    "files": [
+        {
+            "pathname": "project1\/src\/main\/java\/com\/cthing\/project1\/HelloWorld.java",
+            "numLanguages": 1,
+            "totalLines": 29,
+            "codeLines": 10,
+            "commentLines": 15,
+            "blankLines": 4,
+            "languages": [
+                {
+                    "name": "Java",
+                    "totalLines": 29,
+                    "codeLines": 10,
+                    "commentLines": 15,
+                    "blankLines": 4
+                }
+            ]
+        },
+        {
+            "pathname": "project1\/src\/main\/java\/com\/cthing\/project1\/package-info.java",
+            "numLanguages": 1,
+            "totalLines": 9,
+            "codeLines": 1,
+            "commentLines": 7,
+            "blankLines": 1,
+            "languages": [
+                {
+                    "name": "Java",
+                    "totalLines": 9,
+                    "codeLines": 1,
+                    "commentLines": 7,
+                    "blankLines": 1
+                }
+            ]
+        },
+        {
+            "pathname": "project2\/src\/main\/java\/com\/cthing\/project2\/GoodbyeWorld.java",
+            "numLanguages": 1,
+            "totalLines": 29,
+            "codeLines": 10,
+            "commentLines": 15,
+            "blankLines": 4,
+            "languages": [
+                {
+                    "name": "Java",
+                    "totalLines": 29,
+                    "codeLines": 10,
+                    "commentLines": 15,
+                    "blankLines": 4
+                }
+            ]
+        },
+        {
+            "pathname": "project2\/src\/main\/java\/com\/cthing\/project2\/package-info.java",
+            "numLanguages": 1,
+            "totalLines": 9,
+            "codeLines": 1,
+            "commentLines": 7,
+            "blankLines": 1,
+            "languages": [
+                {
+                    "name": "Java",
+                    "totalLines": 9,
+                    "codeLines": 1,
+                    "commentLines": 7,
+                    "blankLines": 1
+                }
+            ]
+        },
+        {
+            "pathname": "project3\/src\/main\/cpp\/app.cpp",
+            "numLanguages": 1,
+            "totalLines": 13,
+            "codeLines": 11,
+            "commentLines": 0,
+            "blankLines": 2,
+            "languages": [
+                {
+                    "name": "Cpp",
+                    "totalLines": 13,
+                    "codeLines": 11,
+                    "commentLines": 0,
+                    "blankLines": 2
+                }
+            ]
+        },
+        {
+            "pathname": "project3\/src\/main\/headers\/app.h",
+            "numLanguages": 1,
+            "totalLines": 13,
+            "codeLines": 10,
+            "commentLines": 0,
+            "blankLines": 3,
+            "languages": [
+                {
+                    "name": "CHeader",
+                    "totalLines": 13,
+                    "codeLines": 10,
+                    "commentLines": 0,
+                    "blankLines": 3
+                }
+            ]
+        },
+        {
+            "pathname": "project4\/src\/main\/swift\/Hello.swift",
+            "numLanguages": 1,
+            "totalLines": 5,
+            "codeLines": 5,
+            "commentLines": 0,
+            "blankLines": 0,
+            "languages": [
+                {
+                    "name": "Swift",
+                    "totalLines": 5,
+                    "codeLines": 5,
+                    "commentLines": 0,
+                    "blankLines": 0
+                }
+            ]
+        },
+        {
+            "pathname": "project5\/src\/main\/kotlin\/org\/example\/Library.kt",
+            "numLanguages": 1,
+            "totalLines": 7,
+            "codeLines": 6,
+            "commentLines": 0,
+            "blankLines": 1,
+            "languages": [
+                {
+                    "name": "Kotlin",
+                    "totalLines": 7,
+                    "codeLines": 6,
+                    "commentLines": 0,
+                    "blankLines": 1
+                }
+            ]
+        }
+    ]
+}

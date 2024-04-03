@@ -119,11 +119,29 @@ public class PluginIntegTest {
 
     @ParameterizedTest
     @MethodSource("gradleVersionProvider")
+    public void testSimpleExcludeTestProject(final String gradleVersion) throws IOException, ProcessingException {
+        copyProject("simple-exclude-test-project");
+        final BuildResult result = createGradleRunner(gradleVersion).build();
+        verifyBuild(result, SUCCESS);
+        verifyAllReports("/reports/simple-exclude-test-project");
+    }
+
+    @ParameterizedTest
+    @MethodSource("gradleVersionProvider")
     public void testComplexProject(final String gradleVersion) throws IOException, ProcessingException {
         copyProject("complex-project");
         final BuildResult result = createGradleRunner(gradleVersion).build();
         verifyBuild(result, SUCCESS);
         verifyAllReports("/reports/complex-project");
+    }
+
+    @ParameterizedTest
+    @MethodSource("gradleVersionProvider")
+    public void testComplexExcludeTestProject(final String gradleVersion) throws IOException, ProcessingException {
+        copyProject("complex-exclude-test-project");
+        final BuildResult result = createGradleRunner(gradleVersion).build();
+        verifyBuild(result, SUCCESS);
+        verifyAllReports("/reports/complex-exclude-test-project");
     }
 
     @ParameterizedTest

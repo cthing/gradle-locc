@@ -55,7 +55,7 @@ plugins {
 ```
 
 The plugin creates a task called `countCodeLines` which counts all source code in all projects. Specifically, the
-files in the following Gradle constructs are counted:
+files in the following Gradle constructs are counted by default:
 
 * All [SourceSets](https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/SourceSetContainer.html),
   which includes JVM-based languages (e.g. Java, Kotlin, Groovy)
@@ -67,6 +67,14 @@ files in the following Gradle constructs are counted:
   [SwiftLibrary](https://docs.gradle.org/current/javadoc/org/gradle/language/swift/SwiftLibrary.html), and
   [SwiftXCTestSuite](https://docs.gradle.org/current/javadoc/org/gradle/nativeplatform/test/xctest/SwiftXCTestSuite.html)
   components
+
+Test files can be excluded from being counted using the following configuration:
+
+```groovy
+locc {
+    includeTestSources = false
+}
+```
 
 ### Counting Additional or Different Files
 

@@ -49,7 +49,7 @@ public class LoccPlugin implements Plugin<Project> {
     public void apply(final Project project) {
         project.getPluginManager().apply(ReportingBasePlugin.class);
 
-        project.getExtensions().create(EXTENSION_NAME, LoccExtension.class, project);
+        final LoccExtension extension = project.getExtensions().create(EXTENSION_NAME, LoccExtension.class, project);
 
         project.getTasks().register(TASK_NAME, LoccTask.class, loccTask -> {
             final Callable<Set<File>> filesProvider = () -> {
@@ -59,11 +59,14 @@ public class LoccPlugin implements Plugin<Project> {
                     final SourceSetContainer sourceSets = proj.getExtensions().findByType(SourceSetContainer.class);
                     if (sourceSets != null) {
                         for (final SourceSet sourceSet : sourceSets) {
-                            files.addAll(sourceSet.getAllSource().getFiles());
+                            if (!SourceSet.TEST_SOURCE_SET_NAME.equals(sourceSet.getName())
+                                    || extension.getIncludeTestSources().get()) {
+                                files.addAll(sourceSet.getAllSource().getFiles());
+                            }
                         }
                     }
 
-                    List.of(CppApplication.class, CppLibrary.class, CppTestSuite.class).forEach(clazz -> {
+                    List.of(CppApplication.class, CppLibrary.class).forEach(clazz -> {
                         final CppComponent cppComponent = proj.getExtensions().findByType(clazz);
                         if (cppComponent != null) {
                             files.addAll(cppComponent.getCppSource().getFiles());
@@ -71,12 +74,25 @@ public class LoccPlugin implements Plugin<Project> {
                         }
                     });
 
-                    List.of(SwiftApplication.class, SwiftLibrary.class, SwiftXCTestSuite.class).forEach(clazz -> {
+                    List.of(SwiftApplication.class, SwiftLibrary.class).forEach(clazz -> {
                         final SwiftComponent swiftComponent = proj.getExtensions().findByType(clazz);
                         if (swiftComponent != null) {
                             files.addAll(swiftComponent.getSwiftSource().getFiles());
                         }
                     });
+
+                    if (extension.getIncludeTestSources().get()) {
+                        final CppComponent cppComponent = proj.getExtensions().findByType(CppTestSuite.class);
+                        if (cppComponent != null) {
+                            files.addAll(cppComponent.getCppSource().getFiles());
+                            files.addAll(cppComponent.getHeaderFiles().getFiles());
+                        }
+
+                        final SwiftComponent swiftComponent = proj.getExtensions().findByType(SwiftXCTestSuite.class);
+                        if (swiftComponent != null) {
+                            files.addAll(swiftComponent.getSwiftSource().getFiles());
+                        }
+                    }
                 }
 
                 return files;

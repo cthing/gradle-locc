@@ -28,15 +28,27 @@ import org.gradle.api.reporting.ReportingExtension;
  */
 public class LoccExtension {
 
+    private final Property<Boolean> includeTestSources;
     private final Property<Boolean> countDocStrings;
     private final DirectoryProperty reportsDir;
 
     public LoccExtension(final Project project) {
         final ObjectFactory objects = project.getObjects();
+        this.includeTestSources = objects.property(Boolean.class).convention(Boolean.TRUE);
         this.countDocStrings = objects.property(Boolean.class).convention(Boolean.TRUE);
 
         final DirectoryProperty baseReportsDir = project.getExtensions().getByType(ReportingExtension.class).getBaseDirectory();
         this.reportsDir = objects.directoryProperty().convention(baseReportsDir.map(base -> base.dir("locc")));
+    }
+
+    /**
+     * Obtains the flag indicating whether test sources should be counted. The default is {@code true},
+     * which will count test sources.
+     *
+     * @return Flag indicating whether test sources should be counted.
+     */
+    public Property<Boolean> getIncludeTestSources() {
+        return this.includeTestSources;
     }
 
     /**

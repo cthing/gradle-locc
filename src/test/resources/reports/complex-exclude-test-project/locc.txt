@@ -1,0 +1,62 @@
+Line Count Report For complex-project
+--------------------------------------------------------------------------------
+Date: ignore
+Project version: unspecified
+Number of files: 8
+Number unrecognized files: 0
+Number of languages: 5
+Total lines: 114
+Code lines: 54
+Comment lines: 44
+Blank lines: 16
+
+Languages
+---------
+C Header: C programming language header file
+    Lines: 13 total, 10 code, 0 comment, 3 blank
+
+C++: C++ programming language source file
+    Lines: 13 total, 11 code, 0 comment, 2 blank
+
+Java: Java programming language
+    Lines: 76 total, 22 code, 44 comment, 10 blank
+
+Kotlin: Kotlin programming language
+    Lines: 7 total, 6 code, 0 comment, 1 blank
+
+Swift: Swift programming language
+    Lines: 5 total, 5 code, 0 comment, 0 blank
+
+Files
+-----
+project1/src/main/java/com/cthing/project1/HelloWorld.java
+    Lines: 29 total, 10 code, 15 comment, 4 blank
+    Languages: Java
+
+project1/src/main/java/com/cthing/project1/package-info.java
+    Lines: 9 total, 1 code, 7 comment, 1 blank
+    Languages: Java
+
+project2/src/main/java/com/cthing/project2/GoodbyeWorld.java
+    Lines: 29 total, 10 code, 15 comment, 4 blank
+    Languages: Java
+
+project2/src/main/java/com/cthing/project2/package-info.java
+    Lines: 9 total, 1 code, 7 comment, 1 blank
+    Languages: Java
+
+project3/src/main/cpp/app.cpp
+    Lines: 13 total, 11 code, 0 comment, 2 blank
+    Languages: C++
+
+project3/src/main/headers/app.h
+    Lines: 13 total, 10 code, 0 comment, 3 blank
+    Languages: C Header
+
+project4/src/main/swift/Hello.swift
+    Lines: 5 total, 5 code, 0 comment, 0 blank
+    Languages: Swift
+
+project5/src/main/kotlin/org/example/Library.kt
+    Lines: 7 total, 6 code, 0 comment, 1 blank
+    Languages: Kotlin

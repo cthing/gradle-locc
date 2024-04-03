@@ -1,0 +1,40 @@
+Line Count Report For simple-project
+--------------------------------------------------------------------------------
+Date: ignore
+Project version: unspecified
+Number of files: 4
+Number unrecognized files: 0
+Number of languages: 3
+Total lines: 61
+Code lines: 31
+Comment lines: 25
+Blank lines: 5
+
+Languages
+---------
+CSS: Cascading Style Sheets language
+    Lines: 7 total, 7 code, 0 comment, 0 blank
+
+HTML: HyperText Markup Language
+    Lines: 12 total, 12 code, 0 comment, 0 blank
+
+Java: Java programming language
+    Lines: 42 total, 12 code, 25 comment, 5 blank
+
+Files
+-----
+src/main/java/com/cthing/testproject/HelloWorld.java
+    Lines: 32 total, 11 code, 17 comment, 4 blank
+    Languages: Java
+
+src/main/java/com/cthing/testproject/package-info.java
+    Lines: 10 total, 1 code, 8 comment, 1 blank
+    Languages: Java
+
+src/main/resources/sample.css
+    Lines: 7 total, 7 code, 0 comment, 0 blank
+    Languages: CSS
+
+src/main/resources/sample.html
+    Lines: 12 total, 12 code, 0 comment, 0 blank
+    Languages: HTML
