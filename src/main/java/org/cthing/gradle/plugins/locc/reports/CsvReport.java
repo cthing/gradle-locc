@@ -32,6 +32,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.cthing.annotations.AccessForTesting;
+import org.cthing.escapers.CsvEscaper;
 import org.cthing.gradle.plugins.locc.CountsCache;
 import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.Language;
@@ -94,18 +95,6 @@ public final class CsvReport extends AbstractLoccReport {
      */
     @AccessForTesting
     static String escape(@Nullable final String str) {
-        if (str == null) {
-            return "";
-        }
-        if (str.isBlank()) {
-            return str;
-        }
-        if (str.indexOf('\"') != -1) {
-            return "\"" + str.replaceAll("\"", "\"\"") + "\"";
-        }
-        if (str.indexOf(',') != -1) {
-            return "\"" + str + "\"";
-        }
-        return str;
+        return (str == null) ? "" : CsvEscaper.escape(str);
     }
 }

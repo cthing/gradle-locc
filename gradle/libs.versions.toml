@@ -15,7 +15,7 @@ versions = { id = "com.github.ben-manes.versions", version = "0.51.0" }
 assertJ = "org.assertj:assertj-core:3.25.3"
 commonsIO = "commons-io:commons-io:2.15.1"
 cthingAnnots = "org.cthing:cthing-annotations:1.0.0"
-locc4j = "org.cthing:locc4j:1.0.0-+"
+escapers = "org.cthing:escapers:1.0.0"
 jacksonCoreUtils = "com.github.java-json-tools:jackson-coreutils:2.0"
 jacksonCore = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
 jacksonDatabind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
@@ -23,14 +23,15 @@ jacksonYaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-ya
 jsonSchemaCore = "com.github.java-json-tools:json-schema-core:1.2.14"
 jsonSchemaValidator = "com.github.java-json-tools:json-schema-validator:2.2.14"
 jsonUnit = "net.javacrumbs.json-unit:json-unit-assertj:3.2.7"
-jsonWriter = "org.cthing:jsonwriter:1.0.0-+"
+jsonWriter = "org.cthing:jsonwriter:1.0.0"
 jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
 junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 junitLauncher = "org.junit.platform:junit-platform-launcher:1.10.2"
 junitParams = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
+locc4j = "org.cthing:locc4j:1.0.0"
 spotbugsContrib = "com.mebigfatguy.sb-contrib:sb-contrib:7.6.4"
 xmlAssertJ = "org.xmlunit:xmlunit-assertj3:2.9.1"
 xmlPlaceholders = "org.xmlunit:xmlunit-placeholders:2.9.1"
 xmlUnit = "org.xmlunit:xmlunit-core:2.9.1"
-xmlWriter = "org.cthing:xmlwriter:2.0.1"
+xmlWriter = "org.cthing:xmlwriter:3.0.0"

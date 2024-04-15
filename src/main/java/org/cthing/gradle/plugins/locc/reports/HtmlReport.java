@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.cthing.annotations.AccessForTesting;
+import org.cthing.escapers.HtmlEscaper;
 import org.cthing.gradle.plugins.locc.CountsCache;
 import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.Language;
@@ -133,7 +133,7 @@ public final class HtmlReport extends AbstractLoccReport {
         writer.write("""
                          <body>
                              <h1>Line Count Report For %s</h1>
-                     """.formatted(escape(this.task.getProject().getName())));
+                     """.formatted(HtmlEscaper.escape(this.task.getProject().getName())));
     }
 
     private void writeBodyEnd(final Writer writer) throws IOException {
@@ -193,12 +193,12 @@ public final class HtmlReport extends AbstractLoccReport {
                                      </tr>
                                  </tbody>
                              </table>
-                     """.formatted(escape(this.task.getProject().getName()),
-                                   escape(this.task.getProject().getVersion().toString()),
-                                   escape(timestamp()), countsCache.getPathCounts().size(), languages.size(),
-                                   countsCache.getUnrecognized().size(), totalCounts.getTotalLines(),
-                                   totalCounts.getCodeLines(), totalCounts.getCommentLines(),
-                                   totalCounts.getBlankLines()));
+                     """.formatted(HtmlEscaper.escape(this.task.getProject().getName()),
+                                   HtmlEscaper.escape(this.task.getProject().getVersion().toString()),
+                                   HtmlEscaper.escape(timestamp()), countsCache.getPathCounts().size(),
+                                   languages.size(), countsCache.getUnrecognized().size(),
+                                   totalCounts.getTotalLines(), totalCounts.getCodeLines(),
+                                   totalCounts.getCommentLines(), totalCounts.getBlankLines()));
     }
 
     private void writeLanguages(final Writer writer, final CountsCache countsCache) throws IOException {
@@ -228,7 +228,7 @@ public final class HtmlReport extends AbstractLoccReport {
             if (description == null) {
                 description = "";
             } else {
-                description = escape(description);
+                description = HtmlEscaper.escape(description);
                 final String website = language.getWebsite();
                 if (website != null) {
                     description = String.format("<a href=\"%s\">%s</a>", website, description);
@@ -244,7 +244,7 @@ public final class HtmlReport extends AbstractLoccReport {
                                              <td class="CountCell">%d</td>
                                              <td class="CountCell">%d</td>
                                          </tr>
-                         """.formatted(escape(language.getDisplayName()), description,
+                         """.formatted(HtmlEscaper.escape(language.getDisplayName()), description,
                                        counts.getTotalLines(), counts.getCodeLines(),
                                        counts.getCommentLines(), counts.getBlankLines()));
         }
@@ -309,12 +309,12 @@ public final class HtmlReport extends AbstractLoccReport {
                                              <td class="CountCell">%d</td>
                                              <td>%s</td>
                                          </tr>
-                         """.formatted(unrecognizedClass, escape(preparePathname(path).toString()),
+                         """.formatted(unrecognizedClass, HtmlEscaper.escape(preparePathname(path).toString()),
                                        counts.getTotalLines(), counts.getCodeLines(), counts.getCommentLines(),
                                        counts.getBlankLines(),
-                                       escape(sortedLanguages.stream()
-                                                             .map(Language::getDisplayName)
-                                                             .collect(Collectors.joining(", ")))));
+                                       HtmlEscaper.escape(sortedLanguages.stream()
+                                                                         .map(Language::getDisplayName)
+                                                                         .collect(Collectors.joining(", ")))));
         }
 
         final Counts totalCounts = countsCache.getTotalCounts();
@@ -334,44 +334,5 @@ public final class HtmlReport extends AbstractLoccReport {
                                  </tbody>
                              </table>
                      """);
-    }
-
-    /**
-     * Escapes the '&amp;', '&lt;', and '&gt;' characters using the standard HTML escape sequences. Control characters
-     * and characters outside the ASCII range are escaped using a numeric character reference. Invalid characters are
-     * skipped.
-     *
-     * @param str String to escape
-     * @return The escaped string
-     */
-    @AccessForTesting
-    static String escape(final String str) {
-        if (str.isBlank()) {
-            return str;
-        }
-
-        final StringBuilder buffer = new StringBuilder();
-        int idx = 0;
-        while (idx < str.length()) {
-            final int ch = str.codePointAt(idx);
-            switch (ch) {
-                case '&' -> buffer.append("&amp;");
-                case '<' -> buffer.append("&lt;");
-                case '>' -> buffer.append("&gt;");
-                case '\n', '\t', '\r' -> buffer.append(ch);
-                default -> {
-                    if (ch > '\u001F' && ch < '\u007F') {
-                        buffer.append(Character.toString(ch));
-                    } else if ((ch >= '\u007F' && ch <= '\uD7FF')
-                            || (ch >= '\uE000' && ch <= '\uFFFD')
-                            || (ch >= 0x10000 && ch <= 0x10FFFF)) {
-                        buffer.append("&#x").append(Integer.toHexString(ch).toUpperCase()).append(';');
-                    }
-                }
-            }
-            idx += Character.charCount(ch);
-        }
-
-        return buffer.toString();
     }
 }

@@ -6,8 +6,6 @@ import java.util.Locale
 
 repositories {
     mavenCentral()
-    // TODO: Remove when locc4j is published to Central
-    maven("https://dist-4.lan/repository/public/")
 }
 
 plugins {
@@ -56,6 +54,7 @@ dependencies {
     api(libs.locc4j)
 
     implementation(libs.cthingAnnots)
+    implementation(libs.escapers)
     implementation(libs.jsonWriter)
     implementation(libs.xmlWriter)
 
