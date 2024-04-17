@@ -6,11 +6,11 @@ plugins {
 }
 
 develocity {
-    // Upload scans when built by GitHub actions.
-    if (System.getenv("CI") != null) {
-        buildScan {
-            termsOfUseUrl = "https://gradle.com/help/legal-terms-of-use"
-            termsOfUseAgree = "yes"
-        }
+    buildScan {
+        termsOfUseUrl = "https://gradle.com/help/legal-terms-of-use"
+        termsOfUseAgree = "yes"
+
+        // Upload scans when built by GitHub actions.
+        publishing.onlyIf { !System.getenv("CI").isNullOrEmpty() }
     }
 }

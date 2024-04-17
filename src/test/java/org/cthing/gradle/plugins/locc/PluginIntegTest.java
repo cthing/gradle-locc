@@ -60,7 +60,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 public class PluginIntegTest {
 
     private static final Pattern TIMESTAMPT_REGEX =
-            Pattern.compile("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}-\\d{2}:\\d{2}");
+            Pattern.compile("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:-\\d{2}:\\d{2}|Z)");
 
     private File projectDir;
 
