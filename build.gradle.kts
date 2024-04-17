@@ -160,7 +160,7 @@ tasks {
             if (isSnapshot) {
                 throw GradleException("Cannot publish a developer build to the Gradle Plugin Portal")
             }
-            if (!hasProperty("gradle.publish.key") || !hasProperty("gradle.publish.secret")) {
+            if (!project.hasProperty("gradle.publish.key") || !project.hasProperty("gradle.publish.secret")) {
                 throw GradleException("Gradle Plugin Portal credentials not defined")
             }
         }
