@@ -12,9 +12,9 @@ plugins {
     `java-gradle-plugin`
     checkstyle
     jacoco
-    `maven-publish`
     signing
     alias(libs.plugins.dependencyAnalysis)
+    alias(libs.plugins.pluginPublish)
     alias(libs.plugins.spotbugs)
     alias(libs.plugins.versions)
 }
@@ -33,6 +33,7 @@ java {
         languageVersion = JavaLanguageVersion.of(libs.versions.java.get())
     }
 }
+
 gradlePlugin {
     website = "https://github.com/cthing/gradle-locc"
     vcsUrl = "https://github.com/cthing/gradle-locc"
@@ -40,9 +41,10 @@ gradlePlugin {
     plugins {
         create("locc4jPlugin") {
             id = "org.cthing.locc"
-            displayName = "Lines-Of-Code Counting Plugin"
-            description = "Counts lines of code in a project. Uses the locc4j library which supports over 250 " +
-                    "code languages and properly handles nested comments and embedded languages (e.g. CSS in HTML)."
+            displayName = "Lines of Code Counting Plugin"
+            description = "Counts lines of code in a project using the performan and highly accurate locc4j library " +
+                    "(https://github.com/cthing/locc4j). Supports over 250 compuer languages and properly handles " +
+                    "nested comments and embedded languages (e.g. CSS in HTML)."
             tags = listOf("counting", "lines of code", "loc", "locc4j", "metrics")
             implementationClass = "org.cthing.gradle.plugins.locc.LoccPlugin"
         }
@@ -153,6 +155,17 @@ tasks {
         isEnabled = false
     }
 
+    publishPlugins {
+        doFirst {
+            if (isSnapshot) {
+                throw GradleException("Cannot publish a developer build to the Gradle Plugin Portal")
+            }
+            if (!hasProperty("gradle.publish.key") || !hasProperty("gradle.publish.secret")) {
+                throw GradleException("Gradle Plugin Portal credentials not defined")
+            }
+        }
+    }
+
     withType<JacocoReport> {
         dependsOn("test")
         with(reports) {
@@ -173,6 +186,12 @@ tasks {
         enabled = false
     }
 
+    withType<Sign>().configureEach {
+        onlyIf("Signing credentials are present") {
+            hasProperty("signing.keyId") && hasProperty("signing.password") && hasProperty("signing.secretKeyRingFile")
+        }
+    }
+
     dependencyUpdates {
         revision = "release"
         gradleReleaseChannel = "current"
@@ -185,56 +204,7 @@ tasks {
     }
 }
 
-val sourceJar by tasks.registering(Jar::class) {
-    from(project.sourceSets["main"].allSource)
-    archiveClassifier = "sources"
-}
-
-val javadocJar by tasks.registering(Jar::class) {
-    from(tasks.getByName("javadoc"))
-    archiveClassifier = "javadoc"
-}
-
 publishing {
-    publications {
-        register("jar", MavenPublication::class) {
-            from(components["java"])
-
-            artifact(sourceJar)
-            artifact(javadocJar)
-
-            pom {
-                name = project.name
-                description = project.description
-                url = "https://github.com/cthing/${project.name}"
-                licenses {
-                    license {
-                        name = "Apache License, Version 2.0"
-                        url = "https://www.apache.org/licenses/LICENSE-2.0"
-                    }
-                }
-                developers {
-                    developer {
-                        id = "baron"
-                        name = "Baron Roberts"
-                        email = "baron@cthing.com"
-                        organization = "C Thing Software"
-                        organizationUrl = "https://www.cthing.com"
-                    }
-                }
-                scm {
-                    connection = "scm:git:https://github.com/cthing/${project.name}.git"
-                    developerConnection = "scm:git:git@github.com:cthing/${project.name}.git"
-                    url = "https://github.com/cthing/${project.name}"
-                }
-                issueManagement {
-                    system = "GitHub Issues"
-                    url = "https://github.com/cthing/${project.name}/issues"
-                }
-            }
-        }
-    }
-
     val repoUrl = if (isSnapshot) findProperty("cthing.nexus.snapshotsUrl") else findProperty("cthing.nexus.candidatesUrl")
     if (repoUrl != null) {
         repositories {
@@ -247,11 +217,5 @@ publishing {
                 }
             }
         }
-    }
-}
-
-if (hasProperty("signing.keyId") && hasProperty("signing.password") && hasProperty("signing.secretKeyRingFile")) {
-    signing {
-        sign(publishing.publications["jar"])
     }
 }

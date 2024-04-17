@@ -1,6 +1,7 @@
 # ![C Thing Software](https://www.cthing.com/branding/CThingSoftware-57x60.png "C Thing Software") gradle-locc
 
-A Gradle plugin for counting lines of code in a project.
+A Gradle plugin for counting lines of code in a project using a fast yet
+highly accurate algorithm.
 
 ## Features
 
@@ -17,12 +18,11 @@ A Gradle plugin for counting lines of code in a project.
 
 At first glance, counting lines of source code appears to be a relatively straightforward task. One could
 detect blank lines and assume every other line contains source code. That would count lines containing
-comments as source code, which is typically a bad assumption. Now begins a slippery slope of naively
-applying regular expressions to detect line comments and block comments. Initial success is short-lived
-once nested comments and languages that can embed other languages (e.g. CSS in HTML) are encountered. At
-that point, it is tempting to employ language specific full lexing and parsing to ensure an accurate
-count. While this achieves high accuracy it is at a high performance code and spends most of that performance
-on needless work.
+comments as source code, which is typically a bad assumption. One coulde naively apply regular expressions
+to detect line comments and block comments. Unfortunately, initial success is short-lived once encountering
+nested comments and languages that can embed other languages (e.g. CSS in HTML). At that point, it is tempting
+to employ language specific full lexing and parsing to ensure an accurate count. While this achieves high
+accuracy it is at a high performance cost spending most of the performance on needless work.
 
 As a compromise between the naive and exhaustive approaches described above, the current state-of-the-art in
 counting lines of code employs a data-driven selective matching approach. A given computer language is
@@ -31,8 +31,9 @@ extension, line and block comment delimiters, and regular expressions to detect 
 indicates the need for more detailed parsing. Highly accurate and performant line counting tools such as
 [tokei](https://github.com/XAMPPRocky/tokei), [scc](https://github.com/boyter/scc) and the
 [locc4j](https://github.com/cthing/locc4j) library used by this plugin use this approach. The
-plugin is able to detect and count over [250 computer languages](TODO),
-and can accommodate languages embedded in languages.
+plugin is able to detect and count over
+[250 computer languages](https://javadoc.io/doc/org.cthing/locc4j/latest/org/cthing/locc4j/Language.html),
+and can accommodate languages embedded within languages.
 
 This plugin counts four types of lines:
 
@@ -45,8 +46,9 @@ This plugin counts four types of lines:
 
 ## Usage
 
-The plugin is available from the [Gradle Plugin Portal](TODO) and can be applied to a Gradle project using the
-`plugins` block:
+The plugin is available from the
+[Gradle Plugin Portal](https://plugins.gradle.org/plugin/org.cthing.locc) and can be applied to a Gradle
+project using the `plugins` block:
 
 ```kotlin
 plugins {
@@ -63,7 +65,7 @@ files in the following Gradle constructs are counted by default:
   [CppLibrary](https://docs.gradle.org/current/javadoc/org/gradle/language/cpp/CppLibrary.html),
   and [CppTestSuite](https://docs.gradle.org/current/javadoc/org/gradle/nativeplatform/test/cpp/CppTestSuite.html)
   components
-* The Switch [SwiftApplication](https://docs.gradle.org/current/javadoc/org/gradle/language/swift/SwiftApplication.html),
+* The Swift [SwiftApplication](https://docs.gradle.org/current/javadoc/org/gradle/language/swift/SwiftApplication.html),
   [SwiftLibrary](https://docs.gradle.org/current/javadoc/org/gradle/language/swift/SwiftLibrary.html), and
   [SwiftXCTestSuite](https://docs.gradle.org/current/javadoc/org/gradle/nativeplatform/test/xctest/SwiftXCTestSuite.html)
   components
@@ -100,9 +102,10 @@ tasks.countCodeLines {
 ### File Extension Mapping
 
 The plugin uses a built-in map of file extensions to computer languages. The complete list of supported languages
-and their file extensions is available in the Javadoc for the [Language](TODO) enum. File extensions can be
-added or removed from the mapping. The following example removes the association of the `css` file extension with
-any language and associates the `foo` file extension with the Java programming language:
+and their file extensions is available in the Javadoc for the
+[Language](https://javadoc.io/doc/org.cthing/locc4j/latest/org/cthing/locc4j/Language.html) enum. File extensions
+can be added or removed from the mapping. The following example removes the association of the `css` file extension
+with any language and associates the `foo` file extension with the Java programming language:
 
 ```groovy
 tasks.countCodeLines {
@@ -137,8 +140,8 @@ provide different amounts of information as described in the following table.
 | YAML   | &#x2705;            | &#x2705;            | &#x2705;        | &#x2705;                     | https://www.cthing.com/schemas/locc-1.json |      
 
 The report for each format is generated as `build/reports/locc/locc.{csv, html, json, txt, xml, yaml}`. By default,
-the plugin will generate a report in the HTML and XML formats. To configure which file formats are generated,
-configure the task reports. For example, to output all formats:
+the plugin will generate a report in the HTML and XML formats. Configure the task reports to control which file
+formats are generated. For example, to output all formats:
 
 ```groovy
 tasks.countCodeLines {
@@ -167,13 +170,14 @@ tasks.countCodeLines {
 
 ## Compatibility
 
-The plugin requires Java 17 or greater. The following gradle versions are supported:
+The following Gradle and Java versions are supported:
 
-| Plugin Version | Gradle Version |
-|----------------|----------------|
-| 1.0.0          | 8.3+           |
+| Plugin Version | Gradle Version | Minimum Java Version |
+|----------------|----------------|----------------------|
+| 1.0.0          | 8.3+           | 17                   |
 
 ## Building
+
 The plugin is compiled for Java 17. If a Java 17 toolchain is not available, one will be downloaded.
 
 Gradle is used to build the plugin:
@@ -186,6 +190,30 @@ The Javadoc for the plugin can be generated by running:
 ```
 
 ## Releasing
-TODO
 
-Note publishing schema if changed
+This project is released on the [Gradle Plugin Portal](https://plugins.gradle.org/plugin/org.cthing.locc).
+Perform the following steps to create a release.
+
+- Commit all changes for the release
+- In the `build.gradle.kts` file
+    - Ensure that `baseVersion` is set to the version for the release. The project follows [semantic versioning](https://semver.org/).
+    - Set `isSnapshot` to `false`
+- Commit the changes
+- Wait until CI successfully builds the release candidate
+- Verify GitHub Actions build is successful
+- If there have been changes to the JSON or XML schema, publish them to the C Thing Software website
+  by adding them to the [cthing-website](https://github.com/cthing/cthing-website/tree/master/src/assets/schemas)
+  project
+- In a browser go to the C Thing Software Jenkins CI page
+- Run the "gradle-locc-validate" job
+- Wait until that job successfully completes
+- Run the "gradle-locc-release" job to release the plugin to the Gradle Plugin Portal
+- Wait for the plugin to be reviewed and made available by the Gradle team
+- In a browser, go to the project on GitHub
+- Generate a release with the tag `<version>`
+- In the build.gradle.kts file
+    - Increment the `baseVersion` patch number
+    - Set `isSnapshot` to `true`
+- Update the `CHANGELOG.md` with the changes in the release and prepare for next release changes
+- Update the `Usage` section in the `README.md` with the latest artifact release version
+- Commit these changes

@@ -8,6 +8,7 @@ spotbugs = "4.8.3"
 
 [plugins]
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.30.0" }
+pluginPublish = { id = "com.gradle.plugin-publish", version = "1.2.1" }
 spotbugs = { id = "com.github.spotbugs", version = "6.0.7" }
 versions = { id = "com.github.ben-manes.versions", version = "0.51.0" }
 
