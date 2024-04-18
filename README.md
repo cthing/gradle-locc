@@ -1,5 +1,8 @@
 # ![C Thing Software](https://www.cthing.com/branding/CThingSoftware-57x60.png "C Thing Software") gradle-locc
 
+[![CI](https://github.com/cthing/gradle-locc/actions/workflows/ci.yml/badge.svg)](https://github.com/cthing/gradle-locc/actions/workflows/ci.yml)
+[![Portal](https://img.shields.io/gradle-plugin-portal/v/org.cthing.locc?label=Plugin%20Portal&logo=gradle)](https://plugins.gradle.org/plugin/org.cthing.locc)
+
 A Gradle plugin for counting lines of code in a project using a fast yet
 highly accurate algorithm.
 
@@ -52,7 +55,7 @@ project using the `plugins` block:
 
 ```kotlin
 plugins {
-  id("org.cthing.locc") version "1.0.0"
+  id("org.cthing.locc") version "1.0.1"
 }
 ```
 
@@ -174,7 +177,7 @@ The following Gradle and Java versions are supported:
 
 | Plugin Version | Gradle Version | Minimum Java Version |
 |----------------|----------------|----------------------|
-| 1.0.0          | 8.3+           | 17                   |
+| 1.0.1+         | 8.3+           | 17                   |
 
 ## Building
 

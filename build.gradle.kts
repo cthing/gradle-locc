@@ -19,8 +19,8 @@ plugins {
     alias(libs.plugins.versions)
 }
 
-val baseVersion = "1.0.1"
-val isSnapshot = false
+val baseVersion = "1.0.2"
+val isSnapshot = true
 
 val isCIServer = System.getenv("CTHING_CI") != null
 val buildNumber = if (isCIServer) System.currentTimeMillis().toString() else "0"
