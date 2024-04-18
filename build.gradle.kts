@@ -19,7 +19,7 @@ plugins {
     alias(libs.plugins.versions)
 }
 
-val baseVersion = "1.0.0"
+val baseVersion = "1.0.1"
 val isSnapshot = false
 
 val isCIServer = System.getenv("CTHING_CI") != null
@@ -42,8 +42,8 @@ gradlePlugin {
         create("locc4jPlugin") {
             id = "org.cthing.locc"
             displayName = "Lines of Code Counting Plugin"
-            description = "Counts lines of code in a project using the performan and highly accurate locc4j library " +
-                    "(https://github.com/cthing/locc4j). Supports over 250 compuer languages and properly handles " +
+            description = "Counts lines of code in a project using the fast and highly accurate locc4j library " +
+                    "(https://github.com/cthing/locc4j). Supports over 250 computer languages and properly handles " +
                     "nested comments and embedded languages (e.g. CSS in HTML)."
             tags = listOf("counting", "lines of code", "loc", "locc4j", "metrics")
             implementationClass = "org.cthing.gradle.plugins.locc.LoccPlugin"
