@@ -18,14 +18,15 @@ package org.cthing.gradle.plugins.locc;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.file.PathUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.GradleRunner;
@@ -61,8 +62,22 @@ public class PluginIntegTest {
 
     private static final Pattern TIMESTAMPT_REGEX =
             Pattern.compile("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:-\\d{2}:\\d{2}|Z)");
+    private static final JsonSchema JSON_SCHEMA;
+    private static final URL XML_SCHEMA;
 
-    private File projectDir;
+    static {
+        try {
+            final JsonNode schema = JsonLoader.fromResource("/org/cthing/gradle/plugins/locc/locc-1.json");
+            JSON_SCHEMA = JsonSchemaFactory.byDefault().getJsonSchema(schema);
+
+            XML_SCHEMA = PluginIntegTest.class.getResource("/org/cthing/gradle/plugins/locc/locc-1.xsd");
+        } catch (final IOException | ProcessingException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+
+    private Path projectDir;
 
     public static Stream<Arguments> gradleVersionProvider() {
         return Stream.of(
@@ -76,14 +91,14 @@ public class PluginIntegTest {
     public void setup() throws IOException {
         final Path baseDir = Path.of(System.getProperty("buildDir"), "integTest");
         Files.createDirectories(baseDir);
-        this.projectDir = Files.createTempDirectory(baseDir, null).toFile();
+        this.projectDir = Files.createTempDirectory(baseDir, null);
     }
 
     @ParameterizedTest
     @MethodSource("gradleVersionProvider")
     public void testNoSourceSets(final String gradleVersion) throws IOException {
-        Files.writeString(this.projectDir.toPath().resolve("settings.gradle.kts"), "rootProject.name=\"test\"");
-        Files.writeString(this.projectDir.toPath().resolve("build.gradle.kts"), """
+        Files.writeString(this.projectDir.resolve("settings.gradle.kts"), "rootProject.name=\"test\"");
+        Files.writeString(this.projectDir.resolve("build.gradle.kts"), """
                 plugins {
                     id("org.cthing.locc")
                 }
@@ -96,8 +111,8 @@ public class PluginIntegTest {
     @ParameterizedTest
     @MethodSource("gradleVersionProvider")
     public void testEmptySourceSet(final String gradleVersion) throws IOException {
-        Files.writeString(this.projectDir.toPath().resolve("settings.gradle.kts"), "rootProject.name=\"test\"");
-        Files.writeString(this.projectDir.toPath().resolve("build.gradle.kts"), """
+        Files.writeString(this.projectDir.resolve("settings.gradle.kts"), "rootProject.name=\"test\"");
+        Files.writeString(this.projectDir.resolve("build.gradle.kts"), """
                 plugins {
                     java
                     id("org.cthing.locc")
@@ -151,11 +166,11 @@ public class PluginIntegTest {
         final BuildResult result = createGradleRunner(gradleVersion).build();
         verifyBuild(result, SUCCESS);
 
-        final File actualReport = new File(this.projectDir, "build/reports/locc/locc.json");
+        final Path actualReport = this.projectDir.resolve("build/reports/locc/locc.json");
         assertThat(actualReport).isReadable();
         showReport(actualReport);
 
-        final JsonNode rootNode = JsonLoader.fromFile(actualReport);
+        final JsonNode rootNode = JsonLoader.fromFile(actualReport.toFile());
         final File pathname = new File(rootNode.get("files").get(0).get("pathname").asText());
         assertThat(pathname).isAbsolute();
     }
@@ -192,12 +207,12 @@ public class PluginIntegTest {
     private void copyProject(final String projectName) throws IOException {
         final URL projectUrl = getClass().getResource("/projects/" + projectName);
         assertThat(projectUrl).isNotNull();
-        FileUtils.copyDirectory(new File(projectUrl.getPath()), this.projectDir);
+        PathUtils.copyDirectory(Path.of(projectUrl.getPath()), this.projectDir);
     }
 
     private GradleRunner createGradleRunner(final String gradleVersion) {
         return GradleRunner.create()
-                           .withProjectDir(this.projectDir)
+                           .withProjectDir(this.projectDir.toFile())
                            .withArguments("countCodeLines")
                            .withPluginClasspath()
                            .withGradleVersion(gradleVersion);
@@ -219,33 +234,30 @@ public class PluginIntegTest {
     }
 
     private void verifyXmlReport(final String reportsDir) throws IOException {
-        try (InputStream expectedReport = getClass().getResourceAsStream(reportsDir + "/locc.xml");
-             InputStream schema = getClass().getResourceAsStream("/org/cthing/gradle/plugins/locc/locc-1.xsd")) {
-            final File actualReport = new File(this.projectDir, "build/reports/locc/locc.xml");
-            assertThat(actualReport).isReadable();
-            showReport(actualReport);
-            XmlAssert.assertThat(actualReport).isValidAgainst(schema);
-            XmlAssert.assertThat(actualReport)
-                     .and(expectedReport)
-                     .withDifferenceEvaluator(new PlaceholderDifferenceEvaluator())
-                     .areIdentical();
-        }
+        final Path actualReport = this.projectDir.resolve("build/reports/locc/locc.xml");
+        assertThat(actualReport).isReadable();
+        showReport(actualReport);
+        XmlAssert.assertThat(actualReport).isValidAgainst(XML_SCHEMA);
+
+        final URL expectedReport = getClass().getResource(reportsDir + "/locc.xml");
+        XmlAssert.assertThat(actualReport)
+                 .and(expectedReport)
+                 .withDifferenceEvaluator(new PlaceholderDifferenceEvaluator())
+                 .areIdentical();
     }
 
     private void verifyJsonReport(final String reportsDir)
             throws IOException, ProcessingException {
-        final File expectedReport = new File(getClass().getResource(reportsDir + "/locc.json").getPath());
-        final File actualReport = new File(this.projectDir, "build/reports/locc/locc.json");
+        final Path actualReport = this.projectDir.resolve("build/reports/locc/locc.json");
         assertThat(actualReport).isReadable();
         showReport(actualReport);
 
-        final String expectedJson = Files.readString(expectedReport.toPath());
-        final String actualJson = Files.readString(actualReport.toPath());
+        final String expectedJson = IOUtils.resourceToString(reportsDir + "/locc.json", StandardCharsets.UTF_8);
+        final String actualJson = Files.readString(actualReport);
         assertThatJson(actualJson).isEqualTo(expectedJson);
 
-        final JsonSchema validator = createJsonValidator();
-        final JsonNode rootNode = JsonLoader.fromFile(actualReport);
-        final ProcessingReport report = validator.validate(rootNode);
+        final JsonNode rootNode = JsonLoader.fromFile(actualReport.toFile());
+        final ProcessingReport report = JSON_SCHEMA.validate(rootNode);
         if (!report.isSuccess()) {
             final StringBuilder buffer = new StringBuilder("Validation of JSON report failed.\n");
             for (final ProcessingMessage msg : report) {
@@ -257,20 +269,18 @@ public class PluginIntegTest {
 
     private void verifyYamlReport(final String reportsDir)
             throws IOException, ProcessingException {
-        final File expectedReport = new File(getClass().getResource(reportsDir + "/locc.yaml").getPath());
-        final File actualReport = new File(this.projectDir, "build/reports/locc/locc.yaml");
+        final Path actualReport = this.projectDir.resolve("build/reports/locc/locc.yaml");
         assertThat(actualReport).isReadable();
         showReport(actualReport);
 
-        final String expectedYaml = Files.readString(expectedReport.toPath());
-        final String actualYaml = Files.readString(actualReport.toPath());
+        final String expectedYaml = IOUtils.resourceToString(reportsDir + "/locc.yaml", StandardCharsets.UTF_8);
+        final String actualYaml = Files.readString(actualReport);
         final String noTimestampYaml = TIMESTAMPT_REGEX.matcher(actualYaml).replaceFirst("ignore");
         assertThat(noTimestampYaml).isEqualTo(expectedYaml);
 
-        final JsonSchema validator = createJsonValidator();
         final YAMLFactory factory = new YAMLFactory();
         final JsonNode rootNode = new ObjectMapper().readTree(factory.createParser(actualYaml));
-        final ProcessingReport report = validator.validate(rootNode);
+        final ProcessingReport report = JSON_SCHEMA.validate(rootNode);
         if (!report.isSuccess()) {
             final StringBuilder buffer = new StringBuilder("Validation of YAML report failed.\n");
             for (final ProcessingMessage msg : report) {
@@ -281,47 +291,36 @@ public class PluginIntegTest {
     }
 
     private void verifyTextReport(final String reportsDir) throws IOException {
-        final File expectedReport = new File(getClass().getResource(reportsDir + "/locc.txt").getPath());
-        final File actualReport = new File(this.projectDir, "build/reports/locc/locc.txt");
+        final Path actualReport = this.projectDir.resolve("build/reports/locc/locc.txt");
         assertThat(actualReport).isReadable();
         showReport(actualReport);
 
-        final String expectedText = Files.readString(expectedReport.toPath());
-        final String actualText = TIMESTAMPT_REGEX.matcher(Files.readString(actualReport.toPath()))
-                                                  .replaceFirst("ignore");
+        final String expectedText = IOUtils.resourceToString(reportsDir + "/locc.txt", StandardCharsets.UTF_8);
+        final String actualText = TIMESTAMPT_REGEX.matcher(Files.readString(actualReport)).replaceFirst("ignore");
         assertThat(actualText).isEqualTo(expectedText);
     }
 
     private void verifyCsvReport(final String reportsDir) throws IOException {
-        final File expectedReport = new File(getClass().getResource(reportsDir + "/locc.csv").getPath());
-        final File actualReport = new File(this.projectDir, "build/reports/locc/locc.csv");
+        final Path actualReport = this.projectDir.resolve("build/reports/locc/locc.csv");
         showReport(actualReport);
 
-        assertThat(actualReport).hasSameTextualContentAs(expectedReport);
+        final String expectedText = IOUtils.resourceToString(reportsDir + "/locc.csv", StandardCharsets.UTF_8);
+        assertThat(actualReport).hasContent(expectedText);
     }
 
     private void verifyHtmlReport(final String reportsDir) throws IOException {
-        final File expectedReport = new File(getClass().getResource(reportsDir + "/locc.html").getPath());
-        final File actualReport = new File(this.projectDir, "build/reports/locc/locc.html");
+        final Path actualReport = this.projectDir.resolve("build/reports/locc/locc.html");
         showReport(actualReport);
 
-        final String expectedText = Files.readString(expectedReport.toPath());
-        final String actualText = TIMESTAMPT_REGEX.matcher(Files.readString(actualReport.toPath()))
-                                                  .replaceFirst("ignore");
+        final String expectedText = IOUtils.resourceToString(reportsDir + "/locc.html", StandardCharsets.UTF_8);
+        final String actualText = TIMESTAMPT_REGEX.matcher(Files.readString(actualReport)).replaceFirst("ignore");
         assertThat(actualText).isEqualTo(expectedText);
     }
 
-    private JsonSchema createJsonValidator() throws IOException, ProcessingException {
-        final JsonSchemaFactory schemaFactory = JsonSchemaFactory.byDefault();
-        final File schemaFile = new File(getClass().getResource("/org/cthing/gradle/plugins/locc/locc-1.json").getPath());
-        final JsonNode schema = JsonLoader.fromFile(schemaFile);
-        return schemaFactory.getJsonSchema(schema);
-    }
-
-    private void showReport(final File report) throws IOException {
+    private void showReport(final Path report) throws IOException {
         if (System.getenv("CTHING_INTEG_TEST") != null) {
-            System.out.println(report.getName() + " " + "-".repeat(60));
-            System.out.print(Files.readString(report.toPath()));
+            System.out.println(report.getFileName() + " " + "-".repeat(60));
+            System.out.print(Files.readString(report));
             System.out.println("-".repeat(70));
         }
     }
