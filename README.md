@@ -198,9 +198,9 @@ This project is released on the [Gradle Plugin Portal](https://plugins.gradle.or
 Perform the following steps to create a release.
 
 - Commit all changes for the release
-- In the `build.gradle.kts` file
-    - Ensure that `baseVersion` is set to the version for the release. The project follows [semantic versioning](https://semver.org/).
-    - Set `isSnapshot` to `false`
+- In the `build.gradle.kts` file, edit the `ProjectVersion` object
+    - Set the version for the release. The project follows [semantic versioning](https://semver.org/).
+    - Set the build type to `BuildType.release`
 - Commit the changes
 - Wait until CI successfully builds the release candidate
 - Verify GitHub Actions build is successful
@@ -214,9 +214,9 @@ Perform the following steps to create a release.
 - Wait for the plugin to be reviewed and made available by the Gradle team
 - In a browser, go to the project on GitHub
 - Generate a release with the tag `<version>`
-- In the build.gradle.kts file
-    - Increment the `baseVersion` patch number
-    - Set `isSnapshot` to `true`
+- In the build.gradle.kts file, edit the `ProjectVersion` object
+    - Increment the version patch number
+    - Set the build type to `BuildType.snapshot`
 - Update the `CHANGELOG.md` with the changes in the release and prepare for next release changes
 - Update the `Usage` section in the `README.md` with the latest artifact release version
 - Commit these changes

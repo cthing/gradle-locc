@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changed
+
+- Use cthing-projectversion library `ProjectVersion` object for project version
+
 ## [1.0.1] - 2024-04-18
 
 ### Added

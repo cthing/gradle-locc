@@ -16,6 +16,7 @@ versions = { id = "com.github.ben-manes.versions", version = "0.51.0" }
 assertJ = "org.assertj:assertj-core:3.25.3"
 commonsIO = "commons-io:commons-io:2.15.1"
 cthingAnnots = "org.cthing:cthing-annotations:1.0.0"
+cthingProjectVersion = "org.cthing:cthing-projectversion:1.0.0"
 escapers = "org.cthing:escapers:1.0.0"
 jacksonCoreUtils = "com.github.java-json-tools:jackson-coreutils:2.0"
 jacksonCore = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
