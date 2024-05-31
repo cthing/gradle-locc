@@ -10,24 +10,22 @@ repositories {
     mavenCentral()
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
 plugins {
     `java-gradle-plugin`
     checkstyle
     jacoco
     signing
+    alias(libs.plugins.cthingVersioning)
     alias(libs.plugins.dependencyAnalysis)
     alias(libs.plugins.pluginPublish)
     alias(libs.plugins.spotbugs)
     alias(libs.plugins.versions)
-}
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath(libs.cthingProjectVersion)
-    }
 }
 
 version = ProjectVersion("1.0.2", BuildType.snapshot)
@@ -163,9 +161,6 @@ tasks {
 
     publishPlugins {
         doFirst {
-            if ((version as ProjectVersion).isSnapshotBuild) {
-                throw GradleException("Cannot publish a developer build to the Gradle Plugin Portal")
-            }
             if (!project.hasProperty("gradle.publish.key") || !project.hasProperty("gradle.publish.secret")) {
                 throw GradleException("Gradle Plugin Portal credentials not defined")
             }
