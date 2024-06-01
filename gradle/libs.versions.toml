@@ -1,21 +1,22 @@
 [versions]
 java = "17"
-checkstyle = "10.14.2"
-jackson = "2.11.0"
-jacoco = "0.8.11"
+checkstyle = "10.17.0"
+jackson = "2.17.1"
+jacoco = "0.8.12"
 junit = "5.10.2"
-spotbugs = "4.8.3"
+spotbugs = "4.8.5"
+xmlUnit = "2.10.0"
 
 [plugins]
 cthingVersioning = { id = "org.cthing.cthing-versioning", version = "1.0.0" }
-dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.30.0" }
+dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.32.0" }
 pluginPublish = { id = "com.gradle.plugin-publish", version = "1.2.1" }
-spotbugs = { id = "com.github.spotbugs", version = "6.0.7" }
+spotbugs = { id = "com.github.spotbugs", version = "6.0.15" }
 versions = { id = "com.github.ben-manes.versions", version = "0.51.0" }
 
 [libraries]
-assertJ = "org.assertj:assertj-core:3.25.3"
-commonsIO = "commons-io:commons-io:2.15.1"
+assertJ = "org.assertj:assertj-core:3.26.0"
+commonsIO = "commons-io:commons-io:2.16.1"
 cthingAnnots = "org.cthing:cthing-annotations:1.0.0"
 escapers = "org.cthing:escapers:1.0.0"
 jacksonCoreUtils = "com.github.java-json-tools:jackson-coreutils:2.0"
@@ -33,7 +34,7 @@ junitLauncher = "org.junit.platform:junit-platform-launcher:1.10.2"
 junitParams = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
 locc4j = "org.cthing:locc4j:1.0.0"
 spotbugsContrib = "com.mebigfatguy.sb-contrib:sb-contrib:7.6.4"
-xmlAssertJ = "org.xmlunit:xmlunit-assertj3:2.9.1"
-xmlPlaceholders = "org.xmlunit:xmlunit-placeholders:2.9.1"
-xmlUnit = "org.xmlunit:xmlunit-core:2.9.1"
+xmlAssertJ = { module = "org.xmlunit:xmlunit-assertj3", version.ref = "xmlUnit" }
+xmlPlaceholders = { module = "org.xmlunit:xmlunit-placeholders", version.ref = "xmlUnit" }
+xmlUnit = { module = "org.xmlunit:xmlunit-core", version.ref = "xmlUnit" }
 xmlWriter = "org.cthing:xmlwriter:3.0.0"

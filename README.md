@@ -218,5 +218,5 @@ Perform the following steps to create a release.
     - Increment the version patch number
     - Set the build type to `BuildType.snapshot`
 - Update the `CHANGELOG.md` with the changes in the release and prepare for next release changes
-- Update the `Usage` section in the `README.md` with the latest artifact release version
+- Update the `Usage` and `Compatibility` sections in the `README.md` with the latest artifact release version
 - Commit these changes
