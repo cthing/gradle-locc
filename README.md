@@ -14,6 +14,7 @@ highly accurate algorithm.
 * Detects embedded languages (e.g. CSS in HTML)
 * Accommodates nested comments
 * Ability to associate custom file extensions with languages and remove unwanted associations
+* Provides a number of [report formats](#reports) (e.g. JSON, XML)
 * Uses the [locc4j](https://github.com/cthing/locc4j) library, which is modeled after the
   [tokei](https://github.com/XAMPPRocky/tokei) line counting tool
 
@@ -133,14 +134,14 @@ locc {
 The plugin is capable of generating a line count report in a number of formats. Note that different formats
 provide different amounts of information as described in the following table.
 
-| Format | Project Information | Counts Per Language | Counts Per File | Counts Per Language Per File | Schema                                     |
-|--------|---------------------|---------------------|-----------------|------------------------------|--------------------------------------------|
-| CSV    |                     | &#x2705;            |                 |                              |                                            |
-| HTML   | &#x2705;            | &#x2705;            | &#x2705;        |                              |                                            | 
-| JSON   | &#x2705;            | &#x2705;            | &#x2705;        | &#x2705;                     | https://www.cthing.com/schemas/locc-1.json |
-| Text   | &#x2705;            | &#x2705;            | &#x2705;        |                              |                                            |
-| XML    | &#x2705;            | &#x2705;            | &#x2705;        | &#x2705;                     | https://www.cthing.com/schemas/locc-1.xsd  |       
-| YAML   | &#x2705;            | &#x2705;            | &#x2705;        | &#x2705;                     | https://www.cthing.com/schemas/locc-1.json |      
+| Format | Project Information | Counts Per Language | Counts Per File | Counts Per Language Per File | Example                                 | Schema                                                    |
+|--------|---------------------|---------------------|-----------------|------------------------------|-----------------------------------------|-----------------------------------------------------------|
+| CSV    |                     | &#x2705;            |                 |                              | [locc.csv](example-reports/locc.csv)    |                                                           |
+| HTML   | &#x2705;            | &#x2705;            | &#x2705;        |                              | [locc.html](example-reports/locc.html)  |                                                           |
+| JSON   | &#x2705;            | &#x2705;            | &#x2705;        | &#x2705;                     | [locc.json](example-reports/locc.json)  | [locc-1.json](https://www.cthing.com/schemas/locc-1.json) |
+| Text   | &#x2705;            | &#x2705;            | &#x2705;        |                              | [locc.txt](example-reports/locc.txt)    |                                                           |
+| XML    | &#x2705;            | &#x2705;            | &#x2705;        | &#x2705;                     | [locc.xml](example-reports/locc.xml)    | [locc-1.xsd](https://www.cthing.com/schemas/locc-1.xsd)   |
+| YAML   | &#x2705;            | &#x2705;            | &#x2705;        | &#x2705;                     | [locc.yaml](example-reports/locc.yaml)  | [locc-1.json](https://www.cthing.com/schemas/locc-1.json) |
 
 The report for each format is generated as `build/reports/locc/locc.{csv, html, json, txt, xml, yaml}`. By default,
 the plugin will generate a report in the HTML and XML formats. Configure the task reports to control which file
