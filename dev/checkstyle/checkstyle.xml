@@ -33,7 +33,6 @@
     <!-- File must start with the C Thing copyright header -->
     <module name="RegexpHeader">
         <property name="headerFile" value="${config_loc}/header.txt"/>
-        <property name="multiLines" value="3"/>
     </module>
 
     <!-- Flag IDE generated comments -->
