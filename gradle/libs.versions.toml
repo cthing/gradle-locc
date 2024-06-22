@@ -8,7 +8,7 @@ spotbugs = "4.8.5"
 xmlUnit = "2.10.0"
 
 [plugins]
-cthingVersioning = { id = "org.cthing.cthing-versioning", version = "1.0.0" }
+cthingVersioning = { id = "org.cthing.cthing-versioning", version = "1.0.1" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.32.0" }
 pluginPublish = { id = "com.gradle.plugin-publish", version = "1.2.1" }
 spotbugs = { id = "com.github.spotbugs", version = "6.0.15" }
