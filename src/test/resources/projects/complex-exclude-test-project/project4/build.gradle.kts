@@ -1,3 +1,5 @@
+import org.gradle.language.swift.SwiftVersion
+
 plugins {
     // Apply the swift-library plugin to add support for building Swift libraries
     `swift-library`
@@ -9,4 +11,6 @@ plugins {
 library {
     // Set the target operating system and architecture for this library
     targetMachines.add(machines.linux.x86_64)
+
+    sourceCompatibility = SwiftVersion.SWIFT5
 }
