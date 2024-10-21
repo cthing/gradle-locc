@@ -71,7 +71,7 @@ public class PluginIntegTest {
     public static Stream<Arguments> gradleVersionProvider() {
         return Stream.of(
                 arguments("8.3"),
-                arguments("8.8")
+                arguments("8.10.2")
         );
     }
 
