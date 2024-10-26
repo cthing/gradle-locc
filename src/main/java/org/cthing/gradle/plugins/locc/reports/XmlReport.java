@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.xml.XMLConstants;
 
@@ -29,6 +28,7 @@ import org.cthing.xmlwriter.XmlWriter;
 import org.gradle.api.Task;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.tasks.TaskExecutionException;
+import org.jspecify.annotations.Nullable;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 

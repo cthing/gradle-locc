@@ -9,11 +9,10 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import org.cthing.locc4j.CountUtils;
 import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.Language;
+import org.jspecify.annotations.Nullable;
 
 
 /**

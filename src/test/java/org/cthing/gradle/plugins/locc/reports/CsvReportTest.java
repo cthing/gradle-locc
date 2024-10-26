@@ -7,8 +7,7 @@ package org.cthing.gradle.plugins.locc.reports;
 
 import java.util.stream.Stream;
 
-import javax.annotation.Nullable;
-
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;

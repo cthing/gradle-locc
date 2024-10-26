@@ -17,7 +17,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.cthing.annotations.AccessForTesting;
@@ -28,6 +27,7 @@ import org.cthing.locc4j.Language;
 import org.gradle.api.Task;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.tasks.TaskExecutionException;
+import org.jspecify.annotations.Nullable;
 
 
 /**
@@ -84,6 +84,7 @@ public final class CsvReport extends AbstractLoccReport {
      */
     @AccessForTesting
     static String escape(@Nullable final String str) {
-        return (str == null) ? "" : CsvEscaper.escape(str);
+        final String escaped = CsvEscaper.escape(str);
+        return (escaped == null) ? "" : escaped;
     }
 }

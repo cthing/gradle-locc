@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.cthing.escapers.YamlEscaper;
@@ -28,6 +27,7 @@ import org.cthing.locc4j.Language;
 import org.gradle.api.Task;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.tasks.TaskExecutionException;
+import org.jspecify.annotations.Nullable;
 
 
 /**

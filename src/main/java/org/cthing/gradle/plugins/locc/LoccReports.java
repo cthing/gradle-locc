@@ -13,8 +13,6 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 
-import javax.annotation.Nullable;
-
 import org.cthing.gradle.plugins.locc.reports.CsvReport;
 import org.cthing.gradle.plugins.locc.reports.HtmlReport;
 import org.cthing.gradle.plugins.locc.reports.JsonReport;
@@ -37,6 +35,7 @@ import org.gradle.api.reporting.Report;
 import org.gradle.api.reporting.ReportContainer;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.Internal;
+import org.jspecify.annotations.Nullable;
 
 import groovy.lang.Closure;
 import groovy.lang.GroovyObjectSupport;

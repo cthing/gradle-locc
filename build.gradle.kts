@@ -28,7 +28,7 @@ plugins {
     alias(libs.plugins.versions)
 }
 
-version = ProjectVersion("1.0.2", BuildType.snapshot)
+version = ProjectVersion("2.0.0", BuildType.snapshot)
 group = "org.cthing"
 description = "A Gradle plugin for counting lines of code."
 
@@ -56,13 +56,14 @@ gradlePlugin {
 }
 
 dependencies {
-    api(libs.jsr305)
     api(libs.locc4j)
 
-    implementation(libs.cthingAnnots)
+    implementation(libs.jspecify)
     implementation(libs.escapers)
     implementation(libs.jsonWriter)
     implementation(libs.xmlWriter)
+
+    compileOnly(libs.cthingAnnots)
 
     testImplementation(libs.assertJ)
     testImplementation(libs.commonsIO)
