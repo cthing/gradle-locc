@@ -56,7 +56,7 @@ project using the `plugins` block:
 
 ```kotlin
 plugins {
-  id("org.cthing.locc") version "1.0.1"
+  id("org.cthing.locc") version "2.0.0"
 }
 ```
 
@@ -178,7 +178,8 @@ The following Gradle and Java versions are supported:
 
 | Plugin Version | Gradle Version | Minimum Java Version |
 |----------------|----------------|----------------------|
-| 1.0.1+         | 8.3+           | 17                   |
+| 1.x            | 8.3+           | 17                   |
+| 2.x            | 8.4+           | 17                   |
 
 ## Building
 
@@ -209,9 +210,9 @@ Perform the following steps to create a release.
   by adding them to the [cthing-website](https://github.com/cthing/cthing-website/tree/master/src/assets/schemas)
   project
 - In a browser go to the C Thing Software Jenkins CI page
-- Run the "gradle-locc-validate" job
+- Run the `gradle-locc-validate` job
 - Wait until that job successfully completes
-- Run the "gradle-locc-release" job to release the plugin to the Gradle Plugin Portal
+- Run the `gradle-locc-release` job to release the plugin to the Gradle Plugin Portal
 - Wait for the plugin to be reviewed and made available by the Gradle team
 - In a browser, go to the project on GitHub
 - Generate a release with the tag `<version>`
