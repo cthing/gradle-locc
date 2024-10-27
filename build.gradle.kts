@@ -57,8 +57,8 @@ gradlePlugin {
 
 dependencies {
     api(libs.locc4j)
+    api(libs.jspecify)
 
-    implementation(libs.jspecify)
     implementation(libs.escapers)
     implementation(libs.jsonWriter)
     implementation(libs.xmlWriter)
