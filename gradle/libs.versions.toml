@@ -1,22 +1,22 @@
 [versions]
 java = "17"
-checkstyle = "10.18.2"
-jackson = "2.18.0"
+checkstyle = "10.20.2"
+jackson = "2.18.2"
 jacoco = "0.8.12"
-junit = "5.11.2"
+junit = "5.11.3"
 spotbugs = "4.8.6"
 xmlUnit = "2.10.0"
 
 [plugins]
 cthingVersioning = { id = "org.cthing.cthing-versioning", version = "3.0.0" }
-dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "2.3.0" }
+dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "2.6.0" }
 pluginPublish = { id = "com.gradle.plugin-publish", version = "1.3.0" }
-spotbugs = { id = "com.github.spotbugs", version = "6.0.25" }
+spotbugs = { id = "com.github.spotbugs", version = "6.0.26" }
 versions = { id = "com.github.ben-manes.versions", version = "0.51.0" }
 
 [libraries]
 assertJ = "org.assertj:assertj-core:3.26.3"
-commonsIO = "commons-io:commons-io:2.17.0"
+commonsIO = "commons-io:commons-io:2.18.0"
 cthingAnnots = "org.cthing:cthing-annotations:2.0.0"
 escapers = "org.cthing:escapers:2.0.0"
 jacksonCoreUtils = "com.github.java-json-tools:jackson-coreutils:2.0"
@@ -25,12 +25,12 @@ jacksonDatabind = { module = "com.fasterxml.jackson.core:jackson-databind", vers
 jacksonYaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 jsonSchemaCore = "com.github.java-json-tools:json-schema-core:1.2.14"
 jsonSchemaValidator = "com.github.java-json-tools:json-schema-validator:2.2.14"
-jsonUnit = "net.javacrumbs.json-unit:json-unit-assertj:3.4.1"
+jsonUnit = "net.javacrumbs.json-unit:json-unit-assertj:4.1.0"
 jsonWriter = "org.cthing:jsonwriter:2.0.0"
 jspecify = "org.jspecify:jspecify:1.0.0"
 junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
-junitLauncher = "org.junit.platform:junit-platform-launcher:1.11.2"
+junitLauncher = "org.junit.platform:junit-platform-launcher:1.11.3"
 junitParams = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
 locc4j = "org.cthing:locc4j:2.0.0"
 spotbugsContrib = "com.mebigfatguy.sb-contrib:sb-contrib:7.6.5"
