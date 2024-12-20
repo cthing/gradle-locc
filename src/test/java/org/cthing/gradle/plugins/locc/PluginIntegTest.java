@@ -54,9 +54,14 @@ public class PluginIntegTest {
             Pattern.compile("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:-\\d{2}:\\d{2}|Z)");
     private static final JsonSchema JSON_SCHEMA;
     private static final URL XML_SCHEMA;
+    private static final Path BASE_DIR = Path.of(System.getProperty("buildDir"), "integTest");
+    private static final Path WORKING_DIR;
 
     static {
         try {
+            Files.createDirectories(BASE_DIR);
+            WORKING_DIR = Files.createTempDirectory(BASE_DIR, "working");
+
             final JsonNode schema = JsonLoader.fromResource("/org/cthing/gradle/plugins/locc/locc-1.json");
             JSON_SCHEMA = JsonSchemaFactory.byDefault().getJsonSchema(schema);
 
@@ -78,9 +83,7 @@ public class PluginIntegTest {
 
     @BeforeEach
     public void setup() throws IOException {
-        final Path baseDir = Path.of(System.getProperty("buildDir"), "integTest");
-        Files.createDirectories(baseDir);
-        this.projectDir = Files.createTempDirectory(baseDir, null);
+        this.projectDir = Files.createTempDirectory(BASE_DIR, "project");
     }
 
     @ParameterizedTest
@@ -202,6 +205,7 @@ public class PluginIntegTest {
     private GradleRunner createGradleRunner(final String gradleVersion) {
         return GradleRunner.create()
                            .withProjectDir(this.projectDir.toFile())
+                           .withTestKitDir(WORKING_DIR.toFile())
                            .withArguments("countCodeLines")
                            .withPluginClasspath()
                            .withGradleVersion(gradleVersion);
