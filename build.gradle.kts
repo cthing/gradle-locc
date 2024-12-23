@@ -181,6 +181,7 @@ tasks {
     withType<Test> {
         useJUnitPlatform()
 
+        systemProperty("projectDir", projectDir)
         systemProperty("buildDir", layout.buildDirectory.get().asFile)
     }
 

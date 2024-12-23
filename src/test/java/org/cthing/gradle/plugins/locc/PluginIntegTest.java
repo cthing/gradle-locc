@@ -55,12 +55,12 @@ public class PluginIntegTest {
     private static final JsonSchema JSON_SCHEMA;
     private static final URL XML_SCHEMA;
     private static final Path BASE_DIR = Path.of(System.getProperty("buildDir"), "integTest");
-    private static final Path WORKING_DIR;
+    private static final Path WORKING_DIR = Path.of(System.getProperty("projectDir"), "testkit");
 
     static {
         try {
             Files.createDirectories(BASE_DIR);
-            WORKING_DIR = Files.createTempDirectory(BASE_DIR, "working");
+            Files.createDirectories(WORKING_DIR);
 
             final JsonNode schema = JsonLoader.fromResource("/org/cthing/gradle/plugins/locc/locc-1.json");
             JSON_SCHEMA = JsonSchemaFactory.byDefault().getJsonSchema(schema);
