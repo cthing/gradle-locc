@@ -8,6 +8,7 @@ package org.cthing.gradle.plugins.locc;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 import javax.xml.transform.stream.StreamSource;
 
@@ -15,7 +16,6 @@ import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.xmlunit.validation.Languages;
 import org.xmlunit.validation.Validator;
 
@@ -25,20 +25,20 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.github.fge.jsonschema.processors.syntax.SyntaxValidator;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.cthing.assertj.gradle.GradleProjectAssert.assertThat;
 
 
-@SuppressWarnings("DataFlowIssue")
 public class PluginApplyTest {
 
     @Test
-    public void testApply(@TempDir final File projectDir) {
-        final Project project = ProjectBuilder.builder().withName("testProject").withProjectDir(projectDir).build();
+    public void testApply() {
+        final Project project = ProjectBuilder.builder().build();
         project.getPluginManager().apply("org.cthing.locc");
 
-        assertThat(project.getExtensions().findByName(LoccPlugin.EXTENSION_NAME)).isInstanceOf(LoccExtension.class);
+        assertThat(project).hasExtensionWithType(LoccPlugin.EXTENSION_NAME, LoccExtension.class);
 
-        final Task task = project.getTasks().findByName(LoccPlugin.TASK_NAME);
-        assertThat(task).isNotNull().isInstanceOf(LoccTask.class);
+        assertThat(project).hasTaskWithReports(LoccPlugin.TASK_NAME);
+        final Task task = project.getTasks().getByName(LoccPlugin.TASK_NAME);
         final LoccReports reports = ((LoccTask)task).getReports();
         assertThat(reports.getXml().getRequired().get()).isTrue();
         assertThat(reports.getHtml().getRequired().get()).isTrue();
@@ -61,7 +61,9 @@ public class PluginApplyTest {
     public void testJsonSchema() throws IOException {
         final JsonSchemaFactory schemaFactory = JsonSchemaFactory.byDefault();
         final SyntaxValidator validator = schemaFactory.getSyntaxValidator();
-        final File schema = new File(getClass().getResource("/org/cthing/gradle/plugins/locc/locc-1.json").getPath());
+        final URL resourceUrl = getClass().getResource("/org/cthing/gradle/plugins/locc/locc-1.json");
+        assertThat(resourceUrl).isNotNull();
+        final File schema = new File(resourceUrl.getPath());
         final JsonNode rootNode = JsonLoader.fromFile(schema);
         assertThat(validator.validateSchema(rootNode).isSuccess()).isTrue();
     }

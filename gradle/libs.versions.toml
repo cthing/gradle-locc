@@ -16,6 +16,7 @@ versions = { id = "com.github.ben-manes.versions", version = "0.51.0" }
 
 [libraries]
 assertJ = "org.assertj:assertj-core:3.26.3"
+assertJGradle = "org.cthing:assertj-gradle:1.0.0"
 commonsIO = "commons-io:commons-io:2.18.0"
 cthingAnnots = "org.cthing:cthing-annotations:2.0.0"
 escapers = "org.cthing:escapers:2.0.0"
