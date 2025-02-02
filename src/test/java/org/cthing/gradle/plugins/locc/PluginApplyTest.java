@@ -25,7 +25,7 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.github.fge.jsonschema.processors.syntax.SyntaxValidator;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.cthing.assertj.gradle.GradleProjectAssert.assertThat;
+import static org.cthing.assertj.gradle.GradleAssertions.assertThat;
 
 
 public class PluginApplyTest {
@@ -40,12 +40,12 @@ public class PluginApplyTest {
         assertThat(project).hasTaskWithReports(LoccPlugin.TASK_NAME);
         final Task task = project.getTasks().getByName(LoccPlugin.TASK_NAME);
         final LoccReports reports = ((LoccTask)task).getReports();
-        assertThat(reports.getXml().getRequired().get()).isTrue();
-        assertThat(reports.getHtml().getRequired().get()).isTrue();
-        assertThat(reports.getYaml().getRequired().get()).isFalse();
-        assertThat(reports.getJson().getRequired().get()).isFalse();
-        assertThat(reports.getCsv().getRequired().get()).isFalse();
-        assertThat(reports.getText().getRequired().get()).isFalse();
+        assertThat(reports.getXml().getRequired()).contains(true);
+        assertThat(reports.getHtml().getRequired()).contains(true);
+        assertThat(reports.getYaml().getRequired()).contains(false);
+        assertThat(reports.getJson().getRequired()).contains(false);
+        assertThat(reports.getCsv().getRequired()).contains(false);
+        assertThat(reports.getText().getRequired()).contains(false);
     }
 
     @Test
