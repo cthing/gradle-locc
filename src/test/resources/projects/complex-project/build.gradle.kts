@@ -11,6 +11,7 @@ tasks {
             json.required = true
             csv.required = true
             text.required = true
+            console.required = true
         }
     }
 }

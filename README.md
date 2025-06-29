@@ -14,7 +14,7 @@ highly accurate algorithm.
 * Detects embedded languages (e.g. CSS in HTML)
 * Accommodates nested comments
 * Ability to associate custom file extensions with languages and remove unwanted associations
-* Provides a number of [report formats](#reports) (e.g. JSON, XML)
+* Provides a number of [report formats](#reports) (e.g. JSON, XML) as well as console output
 * Uses the [locc4j](https://github.com/cthing/locc4j) library, which is modeled after the
   [tokei](https://github.com/XAMPPRocky/tokei) line counting tool
 
@@ -22,7 +22,7 @@ highly accurate algorithm.
 
 At first glance, counting lines of source code appears to be a relatively straightforward task. One could
 detect blank lines and assume every other line contains source code. That would count lines containing
-comments as source code, which is typically a bad assumption. One coulde naively apply regular expressions
+comments as source code, which is typically a bad assumption. One could naively apply regular expressions
 to detect line comments and block comments. Unfortunately, initial success is short-lived once encountering
 nested comments and languages that can embed other languages (e.g. CSS in HTML). At that point, it is tempting
 to employ language specific full lexing and parsing to ensure an accurate count. While this achieves high
@@ -134,18 +134,20 @@ locc {
 The plugin is capable of generating a line count report in a number of formats. Note that different formats
 provide different amounts of information as described in the following table.
 
-| Format | Project Information | Counts Per Language | Counts Per File | Counts Per Language Per File | Example                                 | Schema                                                           |
-|--------|---------------------|---------------------|-----------------|------------------------------|-----------------------------------------|------------------------------------------------------------------|
-| CSV    |                     | &#x2705;            |                 |                              | [locc.csv](example-reports/locc.csv)    |                                                                  |
-| HTML   | &#x2705;            | &#x2705;            | &#x2705;        |                              | [locc.html](example-reports/locc.html)  |                                                                  |
-| JSON   | &#x2705;            | &#x2705;            | &#x2705;        | &#x2705;                     | [locc.json](example-reports/locc.json)  | [locc&#x2011;1.json](https://www.cthing.com/schemas/locc-1.json) |
-| Text   | &#x2705;            | &#x2705;            | &#x2705;        |                              | [locc.txt](example-reports/locc.txt)    |                                                                  |
-| XML    | &#x2705;            | &#x2705;            | &#x2705;        | &#x2705;                     | [locc.xml](example-reports/locc.xml)    | [locc&#x2011;1.xsd](https://www.cthing.com/schemas/locc-1.xsd)   |
-| YAML   | &#x2705;            | &#x2705;            | &#x2705;        | &#x2705;                     | [locc.yaml](example-reports/locc.yaml)  | [locc&#x2011;1.json](https://www.cthing.com/schemas/locc-1.json) |
+| Format  | Enabled  | Project Information | Counts Per Language | Counts Per File | Counts Per Language Per File | Example                                | Schema                                                           |
+|---------|----------|---------------------|---------------------|-----------------|------------------------------|----------------------------------------|------------------------------------------------------------------|
+| Console |          |                     | &#x2705;            |                 |                              | [console](example-reports/console.txt) |                                                                  |
+| CSV     |          |                     | &#x2705;            |                 |                              | [locc.csv](example-reports/locc.csv)   |                                                                  |
+| HTML    | &#x2705; | &#x2705;            | &#x2705;            | &#x2705;        |                              | [locc.html](example-reports/locc.html) |                                                                  |
+| JSON    |          | &#x2705;            | &#x2705;            | &#x2705;        | &#x2705;                     | [locc.json](example-reports/locc.json) | [locc&#x2011;1.json](https://www.cthing.com/schemas/locc-1.json) |
+| Text    |          | &#x2705;            | &#x2705;            | &#x2705;        |                              | [locc.txt](example-reports/locc.txt)   |                                                                  |
+| XML     | &#x2705; | &#x2705;            | &#x2705;            | &#x2705;        | &#x2705;                     | [locc.xml](example-reports/locc.xml)   | [locc&#x2011;1.xsd](https://www.cthing.com/schemas/locc-1.xsd)   |
+| YAML    |          | &#x2705;            | &#x2705;            | &#x2705;        | &#x2705;                     | [locc.yaml](example-reports/locc.yaml) | [locc&#x2011;1.json](https://www.cthing.com/schemas/locc-1.json) |
 
-The report for each format is generated as `build/reports/locc/locc.{csv, html, json, txt, xml, yaml}`. By default,
-the plugin will generate a report in the HTML and XML formats. Configure the task reports to control which file
-formats are generated. For example, to output all formats:
+The report for each format is generated as `build/reports/locc/locc.{csv, html, json, txt, xml, yaml}` except
+the console report, which writes a Gradle `lifecycle` log message. By default, the plugin will generate a report
+in the HTML and XML formats. Configure the task reports to control which formats are generated. For example,
+to output all formats:
 
 ```groovy
 tasks.countCodeLines {
@@ -156,6 +158,7 @@ tasks.countCodeLines {
         json.required = true
         csv.required = true
         text.required = true
+        console.required = true
     }
 }
 ```
@@ -168,6 +171,18 @@ tasks.countCodeLines {
         xml.required = false
         html.required = false
         json.required = true
+    }
+}
+```
+
+To output only a console line count report:
+
+```groovy
+tasks.countCodeLines {
+    reports {
+        xml.required = false
+        html.required = false
+        console.required = true
     }
 }
 ```
