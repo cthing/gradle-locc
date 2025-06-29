@@ -29,7 +29,7 @@ plugins {
     alias(libs.plugins.versions)
 }
 
-version = ProjectVersion("2.1.0", BuildType.release)
+version = ProjectVersion("2.1.1", BuildType.snapshot)
 group = "org.cthing"
 description = "A Gradle plugin for counting lines of code."
 

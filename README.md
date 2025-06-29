@@ -56,7 +56,7 @@ project using the `plugins` block:
 
 ```kotlin
 plugins {
-  id("org.cthing.locc") version "2.0.0"
+  id("org.cthing.locc") version "2.1.0"
 }
 ```
 
