@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 
+import org.cthing.gradle.plugins.locc.reports.ConsoleReport;
 import org.cthing.gradle.plugins.locc.reports.CsvReport;
 import org.cthing.gradle.plugins.locc.reports.HtmlReport;
 import org.cthing.gradle.plugins.locc.reports.JsonReport;
@@ -59,6 +60,7 @@ public class LoccReports extends GroovyObjectSupport implements ReportContainer<
         this.reports.add(new JsonReport(task, reportsDir));
         this.reports.add(new CsvReport(task, reportsDir));
         this.reports.add(new TextReport(task, reportsDir));
+        this.reports.add(new ConsoleReport(task, reportsDir));
     }
 
     @Internal
@@ -89,6 +91,11 @@ public class LoccReports extends GroovyObjectSupport implements ReportContainer<
     @Internal
     public LoccReport getText() {
         return getByName("text");
+    }
+
+    @Internal
+    public LoccReport getConsole() {
+        return getByName("console");
     }
 
     @Override

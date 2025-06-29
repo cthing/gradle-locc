@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.cthing.locc4j.Counter;
 import org.cthing.locc4j.Counts;
@@ -95,6 +96,14 @@ public class CountsCacheTest {
         assertThat(counts).hasSize(2);
         assertThat(counts.get(Language.Cpp)).isEqualTo(PATH_COUNTS.get(CPP_PATH).get(Language.Cpp));
         assertThat(counts.get(Language.Java)).isEqualTo(PATH_COUNTS.get(JAVA_PATH).get(Language.Java));
+    }
+
+    @Test
+    public void testGetLanguagePathCounts() {
+        final Map<Language, Set<Path>> paths = this.countsCache.getLanguagePathCounts();
+        assertThat(paths).hasSize(2);
+        assertThat(paths.get(Language.Cpp)).containsExactly(CPP_PATH);
+        assertThat(paths.get(Language.Java)).containsExactly(JAVA_PATH);
     }
 
     @Test

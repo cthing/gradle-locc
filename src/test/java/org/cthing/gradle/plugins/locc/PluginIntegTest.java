@@ -121,7 +121,18 @@ public class PluginIntegTest {
         copyProject("simple-project");
         final BuildResult result = createGradleRunner(gradleVersion).build();
         verifyBuild(result, SUCCESS);
-        verifyAllReports("/reports/simple-project");
+        verifyFileReports("/reports/simple-project");
+        verifyConsoleReport("""
+                            ---------------------------------------------
+                            Language    Files    Blank    Comment    Code
+                            ---------------------------------------------
+                            CSS             1        0          0       7
+                            HTML            1        0          0      12
+                            Java            3        9         29      21
+                            ---------------------------------------------
+                            Total                    9         29      40
+                            ---------------------------------------------
+                            """.stripIndent(), result.getOutput());
     }
 
     @ParameterizedTest
@@ -130,7 +141,18 @@ public class PluginIntegTest {
         copyProject("simple-exclude-test-project");
         final BuildResult result = createGradleRunner(gradleVersion).build();
         verifyBuild(result, SUCCESS);
-        verifyAllReports("/reports/simple-exclude-test-project");
+        verifyFileReports("/reports/simple-exclude-test-project");
+        verifyConsoleReport("""
+                            ---------------------------------------------
+                            Language    Files    Blank    Comment    Code
+                            ---------------------------------------------
+                            CSS             1        0          0       7
+                            HTML            1        0          0      12
+                            Java            2        5         25      12
+                            ---------------------------------------------
+                            Total                    5         25      31
+                            ---------------------------------------------
+                            """.stripIndent(), result.getOutput());
     }
 
     @ParameterizedTest
@@ -139,7 +161,20 @@ public class PluginIntegTest {
         copyProject("complex-project");
         final BuildResult result = createGradleRunner(gradleVersion).build();
         verifyBuild(result, SUCCESS);
-        verifyAllReports("/reports/complex-project");
+        verifyFileReports("/reports/complex-project");
+        verifyConsoleReport("""
+                            ---------------------------------------------
+                            Language    Files    Blank    Comment    Code
+                            ---------------------------------------------
+                            C Header        1        3          0      10
+                            C++             2        3          0      18
+                            Java            4       10         44      22
+                            Kotlin          2        3          0      15
+                            Swift           3        3          0      17
+                            ---------------------------------------------
+                            Total                   22         44      82
+                            ---------------------------------------------
+                            """.stripIndent(), result.getOutput());
     }
 
     @ParameterizedTest
@@ -148,7 +183,20 @@ public class PluginIntegTest {
         copyProject("complex-exclude-test-project");
         final BuildResult result = createGradleRunner(gradleVersion).build();
         verifyBuild(result, SUCCESS);
-        verifyAllReports("/reports/complex-exclude-test-project");
+        verifyFileReports("/reports/complex-exclude-test-project");
+        verifyConsoleReport("""
+                            ---------------------------------------------
+                            Language    Files    Blank    Comment    Code
+                            ---------------------------------------------
+                            C Header        1        3          0      10
+                            C++             1        2          0      11
+                            Java            4       10         44      22
+                            Kotlin          1        1          0       6
+                            Swift           1        0          0       5
+                            ---------------------------------------------
+                            Total                   16         44      54
+                            ---------------------------------------------
+                            """.stripIndent(), result.getOutput());
     }
 
     @ParameterizedTest
@@ -193,7 +241,7 @@ public class PluginIntegTest {
         copyProject("extensions-project");
         final BuildResult result = createGradleRunner(gradleVersion).build();
         verifyBuild(result, SUCCESS);
-        verifyAllReports("/reports/extensions-project");
+        verifyFileReports("/reports/extensions-project");
     }
 
     private void copyProject(final String projectName) throws IOException {
@@ -217,7 +265,7 @@ public class PluginIntegTest {
         assertThat(task.getOutcome()).as(result.getOutput()).isEqualTo(outcome);
     }
 
-    private void verifyAllReports(final String reportsDir) throws IOException, ProcessingException {
+    private void verifyFileReports(final String reportsDir) throws IOException, ProcessingException {
         verifyXmlReport(reportsDir);
         verifyJsonReport(reportsDir);
         verifyYamlReport(reportsDir);
@@ -310,6 +358,10 @@ public class PluginIntegTest {
         final String expectedText = IOUtils.resourceToString(reportsDir + "/locc.html", StandardCharsets.UTF_8);
         final String actualText = TIMESTAMPT_REGEX.matcher(Files.readString(actualReport)).replaceFirst("ignore");
         assertThat(actualText).isEqualTo(expectedText);
+    }
+
+    private void verifyConsoleReport(final String expected, final String actual) {
+        assertThat(actual).contains(expected);
     }
 
     private void showReport(final Path report) throws IOException {

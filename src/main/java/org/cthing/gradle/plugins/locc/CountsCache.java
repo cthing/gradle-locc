@@ -30,6 +30,8 @@ public class CountsCache {
     @Nullable
     private Map<Language, Counts> languageCounts;
     @Nullable
+    private Map<Language, Set<Path>> languagePathCounts;
+    @Nullable
     private Map<Path, Counts> fileCounts;
     @Nullable
     private Set<Path> unrecognized;
@@ -81,6 +83,18 @@ public class CountsCache {
             this.languageCounts = CountUtils.byLanguage(this.pathCounts);
         }
         return this.languageCounts;
+    }
+
+    /**
+     * Calculates the files for each language.
+     *
+     * @return Files for each language
+     */
+    public Map<Language, Set<Path>> getLanguagePathCounts() {
+        if (this.languagePathCounts == null) {
+            this.languagePathCounts = CountUtils.byLanguageGroupedFile(this.pathCounts);
+        }
+        return this.languagePathCounts;
     }
 
     /**
