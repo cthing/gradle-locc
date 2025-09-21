@@ -229,7 +229,7 @@ Perform the following steps to create a release.
 - Wait until that job successfully completes
 - Run the `gradle-locc-release` job to release the plugin to the Gradle Plugin Portal
 - Wait for the plugin to be reviewed and made available by the Gradle team
-- In a browser, go to the project on GitHub
+- In a browser, go to the project on [GitHub](https://github.com/cthing/gradle-locc)
 - Generate a release with the tag `<version>`
 - In the build.gradle.kts file, edit the `ProjectVersion` object
     - Increment the version patch number
