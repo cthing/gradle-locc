@@ -5,7 +5,6 @@
 
 package org.cthing.gradle.plugins.locc.reports;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -79,12 +78,6 @@ abstract class AbstractLoccReport extends GroovyObjectSupport implements LoccRep
     @Override
     public RegularFileProperty getOutputLocation() {
         return this.destination;
-    }
-
-    @Override
-    @Deprecated
-    public void setDestination(final File file) {
-        this.destination.set(file);
     }
 
     /**

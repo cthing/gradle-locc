@@ -47,7 +47,6 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
 
-@SuppressWarnings("DataFlowIssue")
 public class PluginIntegTest {
 
     private static final Pattern TIMESTAMPT_REGEX =

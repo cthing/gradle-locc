@@ -44,7 +44,7 @@ gradlePlugin {
     vcsUrl = "https://github.com/cthing/gradle-locc"
 
     plugins {
-        create("locc4jPlugin") {
+        create("locc4jPlugin", Action {
             id = "org.cthing.locc"
             displayName = "Lines of Code Counting Plugin"
             description = "Counts lines of code in a project using the fast and highly accurate locc4j library " +
@@ -52,7 +52,7 @@ gradlePlugin {
                     "nested comments and embedded languages (e.g. CSS in HTML)."
             tags = listOf("counting", "lines of code", "loc", "locc4j", "metrics")
             implementationClass = "org.cthing.gradle.plugins.locc.LoccPlugin"
-        }
+        })
     }
 }
 

@@ -33,8 +33,8 @@ import groovy.lang.Closure;
 /**
  * Performs the work of counting the project's code file.
  */
-@SuppressWarnings("AssignmentOrReturnOfFieldWithMutableType")
-public class LoccTask extends SourceTask implements Reporting<LoccReports> {
+@SuppressWarnings("AssignmentOrReturnOfFieldWithMutableType")       // SUPPRESS CHECKSTYLE ok
+public abstract class LoccTask extends SourceTask implements Reporting<LoccReports> {
 
     private final Property<Boolean> countDocStrings;
     private final LoccReports reports;
