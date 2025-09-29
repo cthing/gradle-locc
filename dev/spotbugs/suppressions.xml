@@ -15,6 +15,10 @@
         <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
     </Match>
     <Match>
+        <Bug pattern="PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS"/>
+        <Class name="~.*Task"/>
+    </Match>
+    <Match>
         <Bug pattern="VA_FORMAT_STRING_USES_NEWLINE"/>
     </Match>
     <Match>

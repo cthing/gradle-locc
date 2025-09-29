@@ -33,17 +33,16 @@ import groovy.lang.Closure;
 /**
  * Performs the work of counting the project's code file.
  */
-@SuppressWarnings("AssignmentOrReturnOfFieldWithMutableType")       // SUPPRESS CHECKSTYLE ok
+@SuppressWarnings("AssignmentOrReturnOfFieldWithMutableType")
 public abstract class LoccTask extends SourceTask implements Reporting<LoccReports> {
 
-    private final Property<Boolean> countDocStrings;
     private final LoccReports reports;
 
     public LoccTask() {
         final Project project = getProject();
         final LoccExtension extension = project.getExtensions().getByType(LoccExtension.class);
 
-        this.countDocStrings = project.getObjects().property(Boolean.class).convention(extension.getCountDocStrings());
+        getCountDocStrings().convention(extension.getCountDocStrings());
 
         final DirectoryProperty reportsDir = project.getObjects().directoryProperty().convention(extension.getReportsDir());
         this.reports = new LoccReports(this, reportsDir);
@@ -57,9 +56,7 @@ public abstract class LoccTask extends SourceTask implements Reporting<LoccRepor
      */
     @Input
     @Optional
-    public Property<Boolean> getCountDocStrings() {
-        return this.countDocStrings;
-    }
+    public abstract Property<Boolean> getCountDocStrings();
 
     /**
      * Adds the specified file extension to specified language's list of extensions. If an extension already
@@ -111,7 +108,7 @@ public abstract class LoccTask extends SourceTask implements Reporting<LoccRepor
         final List<Path> files = getSource().getFiles().stream().map(File::toPath).toList();
 
         final FileCounter counter = new FileCounter();
-        counter.countDocStrings(this.countDocStrings.get());
+        counter.countDocStrings(getCountDocStrings().get());
         try {
             final Map<Path, Map<Language, Counts>> counts = counter.count(files);
             generateReports(counts);

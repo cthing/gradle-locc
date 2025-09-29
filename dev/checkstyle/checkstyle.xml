@@ -74,11 +74,6 @@
         <property name="severity" value="${checkstyle.severity}" default="error"/>
         <property name="tabWidth" value="4"/>
 
-        <!-- Abstract class must start with "Abstract" or end with "Factory" -->
-        <module name="AbstractClassName">
-            <property name="ignoreModifier" value="true"/>
-        </module>
-
         <!-- No "{}" for single value annotations, no empty parenthesis, no trailing commas -->
         <module name="AnnotationUseStyle"/>
 
