@@ -9,7 +9,7 @@ xmlUnit = "2.10.4"
 
 [plugins]
 cthingPublishing = { id = "org.cthing.cthing-publishing", version = "3.0.0" }
-cthingVersioning = { id = "org.cthing.cthing-versioning", version = "3.0.0" }
+cthingVersioning = { id = "org.cthing.cthing-versioning", version = "3.1.0" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "3.0.4" }
 pluginPublish = { id = "com.gradle.plugin-publish", version = "2.0.0" }
 spotbugs = { id = "com.github.spotbugs", version = "6.4.2" }
