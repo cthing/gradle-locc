@@ -16,11 +16,11 @@ import org.cthing.locc4j.Counts;
 import org.cthing.locc4j.FileCounter;
 import org.cthing.locc4j.Language;
 import org.gradle.api.Action;
-import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.reporting.Reporting;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.SourceTask;
@@ -39,14 +39,16 @@ public abstract class LoccTask extends SourceTask implements Reporting<LoccRepor
     private final LoccReports reports;
 
     public LoccTask() {
-        final Project project = getProject();
-        final LoccExtension extension = project.getExtensions().getByType(LoccExtension.class);
-
-        getCountDocStrings().convention(extension.getCountDocStrings());
-
-        final DirectoryProperty reportsDir = project.getObjects().directoryProperty().convention(extension.getReportsDir());
-        this.reports = new LoccReports(this, reportsDir);
+        this.reports = new LoccReports(this, getReportsDir());
     }
+
+    /**
+     * Obtains the line count report directory.
+     *
+     * @return Line count report directory
+     */
+    @Internal
+    public abstract DirectoryProperty getReportsDir();
 
     /**
      * Obtains the flag indicating whether to count documentation string as comments or ignore them. The default

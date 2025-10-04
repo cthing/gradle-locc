@@ -41,6 +41,9 @@ public class LoccPlugin implements Plugin<Project> {
         final LoccExtension extension = project.getExtensions().create(EXTENSION_NAME, LoccExtension.class, project);
 
         project.getTasks().register(TASK_NAME, LoccTask.class, loccTask -> {
+            loccTask.getCountDocStrings().convention(extension.getCountDocStrings());
+            loccTask.getReportsDir().convention(extension.getReportsDir());
+
             final Callable<Set<File>> filesProvider = () -> {
                 final Set<File> files = new HashSet<>();
 
