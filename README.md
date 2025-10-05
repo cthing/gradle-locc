@@ -56,7 +56,7 @@ project using the `plugins` block:
 
 ```kotlin
 plugins {
-  id("org.cthing.locc") version "2.1.0"
+  id("org.cthing.locc") version "3.0.0"
 }
 ```
 
@@ -194,7 +194,7 @@ The following Gradle and Java versions are supported:
 | Plugin Version | Gradle Version | Minimum Java Version |
 |----------------|----------------|----------------------|
 | 1.x            | 8.3+           | 17                   |
-| 2.x            | 8.4+           | 17                   |
+| 3.x            | 8.4+, 9.0+     | 17                   |
 
 ## Building
 

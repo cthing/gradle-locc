@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [3.0.0] - 2025-10-05
+
+### Changed
+
+- Allow plugin configuration to be cached.
+
 ## [2.1.0] - 2025-06-29
 
 ### Added
@@ -28,7 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First release
 
-[unreleased]: https://github.com/cthing/gradle-locc/compare/2.1.0...HEAD
+[unreleased]: https://github.com/cthing/gradle-locc/compare/3.0.0...HEAD
+[3.0.0]: https://github.com/cthing/gradle-locc/releases/tag/3.0.0
 [2.1.0]: https://github.com/cthing/gradle-locc/releases/tag/2.1.0
 [2.0.0]: https://github.com/cthing/gradle-locc/releases/tag/2.0.0
 [1.0.1]: https://github.com/cthing/gradle-locc/releases/tag/1.0.1
