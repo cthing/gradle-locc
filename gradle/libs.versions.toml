@@ -8,6 +8,7 @@ spotbugs = "4.9.6"
 xmlUnit = "2.10.4"
 
 [plugins]
+buildGreeting = { id = "org.cthing.build-greeting", version = "1.0.0" }
 cthingPublishing = { id = "org.cthing.cthing-publishing", version = "3.0.0" }
 cthingVersioning = { id = "org.cthing.cthing-versioning", version = "3.1.0" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "3.0.4" }
