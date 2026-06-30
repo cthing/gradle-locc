@@ -21,7 +21,7 @@ assertJ = "org.assertj:assertj-core:3.27.6"
 assertJGradle = "org.cthing:assertj-gradle:3.0.0"
 commonsIO = "commons-io:commons-io:2.20.0"
 cthingAnnots = "org.cthing:cthing-annotations:2.0.0"
-escapers = "org.cthing:escapers:2.0.0"
+escapers = "org.cthing:escapers:2.1.0"
 jacksonCoreUtils = "com.github.java-json-tools:jackson-coreutils:2.0"
 jacksonCore = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
 jacksonDatabind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
